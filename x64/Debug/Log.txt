@@ -1,0 +1,5 @@
+23:51:03: [QUIK LOG]: file: texture.cpp, line: 86
+23:51:03: [QUIK LOG]: file: texture.cpp, line: 17
+23:51:03: [QUIK LOG]: file: model.cpp, line: 19
+23:51:03: Graphics::Initialize: Could not initialize model!
+23:51:04: [QUIK LOG]: file: system.cpp, line: 37
