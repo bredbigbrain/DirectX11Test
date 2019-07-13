@@ -16,7 +16,7 @@ private:
 
 	struct SVertex
 	{
-		XMFLOAT3 m_position;
+		XMFLOAT3 m_position; 
 		XMFLOAT2 m_textureCoord;
 	};
 
