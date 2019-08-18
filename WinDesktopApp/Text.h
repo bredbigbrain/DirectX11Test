@@ -24,6 +24,7 @@ public:
 		XMMATRIX matrOrtho, ID3D11ShaderResourceView* pFontTexture);
 
 	bool UpdateSentence(ID3D11DeviceContext* pDeviceContext, CFont* pFont, const char* lpszText, int nPositionX, int nPositionY, XMFLOAT4 color);
+	bool UpdateSentence(ID3D11DeviceContext* pDeviceContext, CFont* pFont, const char* lpszText);
 	const char* GetText();
 
 protected:
@@ -38,6 +39,7 @@ protected:
 	ID3D11Buffer* m_pVertexBuffer2{nullptr};
 	ID3D11Buffer* m_pIndexBuffer2{nullptr};
 	XMFLOAT4 m_pixelColor;
+	XMFLOAT2 m_lastPosition;
 	int m_nScreenWidth{0};
 	int m_nScreenHeight{0};
 	int m_nMaxLength{0};

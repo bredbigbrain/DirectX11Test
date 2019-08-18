@@ -93,7 +93,7 @@ bool System::Frame()
 	if (m_pInput->IsKeyDown(VK_ESCAPE))
 		return false;
 
-	if (!m_pZone->Frame(m_pDirect3D, m_pInput, m_pShManager, Time::GetDtMS(), Settings::g_graphics.dFramesPerSecond))
+	if (!m_pZone->Frame(m_pDirect3D, m_pInput, m_pShManager, Time::GetDtMS(), 1 / Time::GetDtS()))
 		RETURN_AND_LOG(false);
 
 	m_pInput->OnEndOfFrame();
@@ -161,8 +161,8 @@ void System::InitializeWindows(int& nScreenWidth, int& nScreenHeight)
 	}
 	else
 	{
-		nScreenWidth = 800;
-		nScreenHeight = 600;
+		nScreenWidth = 1024;
+		nScreenHeight = 768;
 
 		posX = (GetSystemMetrics(SM_CXSCREEN) - nScreenWidth) / 2;
 		posY = (GetSystemMetrics(SM_CYSCREEN) - nScreenHeight) / 2;

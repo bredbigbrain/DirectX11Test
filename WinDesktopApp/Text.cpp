@@ -39,9 +39,17 @@ void CText::Render(ID3D11DeviceContext * pDeviceContext, CShaderManager * pShMan
 	RenderSentence(pDeviceContext, pShManager, matrWorld, matrView, matrOrtho, pFontTexture);
 }
 
+bool CText::UpdateSentence(ID3D11DeviceContext * pDeviceContext, CFont * pFont, const char * lpszText)
+{
+	return UpdateSentence(pDeviceContext, pFont, lpszText, m_lastPosition.x, m_lastPosition.y, m_pixelColor);
+}
+
 bool CText::UpdateSentence(ID3D11DeviceContext * pDeviceContext, CFont * pFont, const char * lpszText, int nPositionX, int nPositionY, XMFLOAT4 color)
 {
 	m_pixelColor = color;
+
+	m_lastPosition.x = nPositionX;
+	m_lastPosition.y = nPositionY;
 
 	size_t nNumLetters = strnlen_s(lpszText, Debug::MAX_LOG_LENGTH);
 	if(nNumLetters > m_nMaxLength)
@@ -58,7 +66,7 @@ bool CText::UpdateSentence(ID3D11DeviceContext * pDeviceContext, CFont * pFont, 
 	float fDrawX = (m_nScreenWidth / 2. * -1.) + nPositionX;
 	float fDrawY = m_nScreenHeight / 2. + nPositionY;
 
-	pFont->BuildVertexArray(arrVerticies, lpszText, nPositionX, nPositionY);
+	pFont->BuildVertexArray(arrVerticies, lpszText, fDrawX, fDrawY);
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	if(FAILED(pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))

@@ -5,6 +5,9 @@
 #include <sstream>
 
 
+int m_nOffsetX = 130;
+int m_nOffsetY = 5;
+
 
 bool CUserInterface::Initialize(D3D* pDirect3D, int nScreenHeight, int nScreenWidht)
 {
@@ -16,7 +19,7 @@ bool CUserInterface::Initialize(D3D* pDirect3D, int nScreenHeight, int nScreenWi
 
 	m_pFpsString = new CText();
 	bResult = m_pFpsString->Initialize(pDirect3D->GetDevice(), pDirect3D->GetDeviceContext(), nScreenWidht, nScreenHeight, 16, false, m_pFont
-		, "Fps: 0", 0, 0, DirectX::XMFLOAT4(0.f, 1.f, 0.f, 1.f));
+		, "Fps: 0", m_nOffsetX, m_nOffsetY, DirectX::XMFLOAT4(0.f, 1.f, 0.f, 1.f));
 
 	if(!bResult)
 		RETURN_AND_LOG(false);
@@ -37,14 +40,14 @@ bool CUserInterface::Initialize(D3D* pDirect3D, int nScreenHeight, int nScreenWi
 	m_pVideoString = new CText();
 
 	bResult = m_pVideoString->Initialize(pDirect3D->GetDevice(), pDirect3D->GetDeviceContext(), nScreenWidht, nScreenHeight, str.size(), false, m_pFont
-		, str.c_str(), 0, 0, DirectX::XMFLOAT4(0.f, 1.f, 0.f, 1.f));
+		, str.c_str(), m_nOffsetX, -16 + m_nOffsetY, DirectX::XMFLOAT4(0.f, 1.f, 0.f, 1.f));
 
 	if(!bResult)
 		RETURN_AND_LOG(false);
 
 	m_pPositionString = new CText();
 	bResult = m_pPositionString->Initialize(pDirect3D->GetDevice(), pDirect3D->GetDeviceContext(), nScreenWidht, nScreenHeight, Debug::MAX_LOG_LENGTH, false, m_pFont
-		, "Position: NULL", 0, -0, DirectX::XMFLOAT4(0.f, 1.f, 0.f, 1.f));
+		, "Position: NULL", m_nOffsetX, -32 + m_nOffsetY, DirectX::XMFLOAT4(0.f, 1.f, 0.f, 1.f));
 
 	if(!bResult)
 		RETURN_AND_LOG(false);
@@ -105,7 +108,7 @@ bool CUserInterface::UpdateFpsString(ID3D11DeviceContext * pDeviceContext, int n
 	std::string str = "Fps: ";
 	str += std::to_string(nFPS);
 
-	return m_pFpsString->UpdateSentence(pDeviceContext, m_pFont, str.c_str(), 0, 0, color);
+	return m_pFpsString->UpdateSentence(pDeviceContext, m_pFont, str.c_str());
 }
 
 bool CUserInterface::UpdatePositionString(ID3D11DeviceContext * pDeviceContext, XMFLOAT3& position, XMFLOAT3& rotation)
@@ -131,5 +134,5 @@ bool CUserInterface::UpdatePositionString(ID3D11DeviceContext * pDeviceContext, 
 	os << rotation.z;
 	os << ")";
 
-	return m_pPositionString->UpdateSentence(pDeviceContext, m_pFont, os.str().c_str(), 0, 0, XMFLOAT4(1.f, 1.f, 1.f, 1.f));
+	return m_pPositionString->UpdateSentence(pDeviceContext, m_pFont, os.str().c_str());
 }

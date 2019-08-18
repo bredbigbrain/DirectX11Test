@@ -81,6 +81,12 @@ void CZone::HandeMovementInput(CInput* pInput, float fDT)
 
 	if(pInput->IsKeyClicked(VK_F1))
 		m_bDisplayUI = !m_bDisplayUI;
+
+	if(pInput->IsKeyClicked(VK_HOME))
+	{
+		m_pPosition->SetPosition(128.f, 5.f, -10.f);
+		m_pPosition->SetRotation(0.f, 0.f, 0.f);
+	}
 }
 
 

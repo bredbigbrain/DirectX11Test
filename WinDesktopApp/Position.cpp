@@ -2,7 +2,8 @@
 #include "Globals.h"
 #include <math.h>
 
-
+float m_fMaxMoveSpeed = 2.5f;
+float m_fMaxTurnSpeed = 0.25f;
 
 void CPosition::SetPosition(float fX, float fY, float fZ)
 {
@@ -95,8 +96,8 @@ void CPosition::MoveForward(bool bKeyDown)
 	if(bKeyDown)
 	{
 		m_fForwardSpeed += m_fFrameTime * 1.f;
-		if(m_fForwardSpeed > m_fFrameTime * 50)
-			m_fForwardSpeed = m_fFrameTime * 50;
+		if(m_fForwardSpeed > m_fMaxMoveSpeed)
+			m_fForwardSpeed = m_fMaxMoveSpeed;
 	}
 	else
 	{
@@ -105,9 +106,12 @@ void CPosition::MoveForward(bool bKeyDown)
 			m_fForwardSpeed = 0;
 	}
 
-	float fRadians = Math3DNS::DegreesToRadians(m_fRotationY);
-	m_fPositionX += sinf(fRadians) * m_fForwardSpeed;
-	m_fPositionZ += cosf(fRadians) * m_fForwardSpeed;
+	if(m_fForwardSpeed != 0)
+	{
+		float fRadians = Math3DNS::DegreesToRadians(m_fRotationY);
+		m_fPositionX += sinf(fRadians) * m_fForwardSpeed;
+		m_fPositionZ += cosf(fRadians) * m_fForwardSpeed;
+	}
 }
 
 void CPosition::MoveBackward(bool bKeyDown)
@@ -115,8 +119,8 @@ void CPosition::MoveBackward(bool bKeyDown)
 	if(bKeyDown)
 	{
 		m_fBackwardSpeed += m_fFrameTime * 1.f;
-		if(m_fBackwardSpeed > m_fFrameTime * 50)
-			m_fBackwardSpeed = m_fFrameTime * 50;
+		if(m_fBackwardSpeed > m_fMaxMoveSpeed)
+			m_fBackwardSpeed = m_fMaxMoveSpeed;
 	}
 	else
 	{
@@ -125,9 +129,12 @@ void CPosition::MoveBackward(bool bKeyDown)
 			m_fBackwardSpeed = 0;
 	}
 
-	float fRadians = Math3DNS::DegreesToRadians(m_fRotationY);
-	m_fPositionX -= sinf(fRadians) * m_fBackwardSpeed;
-	m_fPositionZ -= cosf(fRadians) * m_fBackwardSpeed;
+	if(m_fBackwardSpeed != 0)
+	{
+		float fRadians = Math3DNS::DegreesToRadians(m_fRotationY);
+		m_fPositionX -= sinf(fRadians) * m_fBackwardSpeed;
+		m_fPositionZ -= cosf(fRadians) * m_fBackwardSpeed;
+	}
 }
 
 void CPosition::MoveUpward(bool bKeyDown)
@@ -135,8 +142,8 @@ void CPosition::MoveUpward(bool bKeyDown)
 	if(bKeyDown)
 	{
 		m_fUpwardSpeed += m_fFrameTime * 1.f;
-		if(m_fUpwardSpeed > m_fFrameTime * 50)
-			m_fUpwardSpeed = m_fFrameTime * 50;
+		if(m_fUpwardSpeed > m_fMaxMoveSpeed / 5.f)
+			m_fUpwardSpeed = m_fMaxMoveSpeed / 5.f;
 	}
 	else
 	{
@@ -153,8 +160,8 @@ void CPosition::MoveDownward(bool bKeyDown)
 	if(bKeyDown)
 	{
 		m_fDownwardSpeed += m_fFrameTime * 1.f;
-		if(m_fDownwardSpeed > m_fFrameTime * 50)
-			m_fDownwardSpeed = m_fFrameTime * 50;
+		if(m_fDownwardSpeed > m_fMaxMoveSpeed / 5.f)
+			m_fDownwardSpeed = m_fMaxMoveSpeed / 5.f;
 	}
 	else
 	{
@@ -171,8 +178,8 @@ void CPosition::TurnLeft(bool bKeyDown)
 	if(bKeyDown)
 	{
 		m_fLeftTurnSpeed += m_fFrameTime * 5.f;
-		if(m_fLeftTurnSpeed > m_fFrameTime * 150)
-			m_fLeftTurnSpeed = m_fFrameTime * 150;
+		if(m_fLeftTurnSpeed > m_fMaxTurnSpeed)
+			m_fLeftTurnSpeed = m_fMaxTurnSpeed;
 	}
 	else
 	{
@@ -192,8 +199,8 @@ void CPosition::TurnRight(bool bKeyDown)
 	if(bKeyDown)
 	{
 		m_fRightTurnSpeed += m_fFrameTime * 5.f;
-		if(m_fRightTurnSpeed > m_fFrameTime * 150)
-			m_fRightTurnSpeed = m_fFrameTime * 150;
+		if(m_fRightTurnSpeed > m_fMaxTurnSpeed)
+			m_fRightTurnSpeed = m_fMaxTurnSpeed;
 	}
 	else
 	{
@@ -202,7 +209,7 @@ void CPosition::TurnRight(bool bKeyDown)
 			m_fRightTurnSpeed = 0;
 	}
 
-	m_fRotationY -= m_fFrameTime * m_fRightTurnSpeed;
+	m_fRotationY += m_fFrameTime * m_fRightTurnSpeed;
 
 	if(m_fRotationY < 0)
 		m_fRotationY += 360.f;
@@ -213,8 +220,8 @@ void CPosition::LookUpward(bool bKeyDown)
 	if(bKeyDown)
 	{
 		m_fLookUpSpeed += m_fFrameTime * 5.f;
-		if(m_fLookUpSpeed > m_fFrameTime * 150)
-			m_fLookUpSpeed = m_fFrameTime * 150;
+		if(m_fLookUpSpeed > m_fMaxTurnSpeed / 5.f)
+			m_fLookUpSpeed = m_fMaxTurnSpeed;
 	}
 	else
 	{
@@ -223,10 +230,10 @@ void CPosition::LookUpward(bool bKeyDown)
 			m_fLookUpSpeed = 0;
 	}
 
-	m_fRotationY -= m_fFrameTime * m_fLookUpSpeed;
+	m_fRotationX -= m_fFrameTime * m_fLookUpSpeed;
 
-	if(m_fRotationY < 0)
-		m_fRotationY += 360.f;
+	if(m_fRotationX < 0)
+		m_fRotationX += 360.f;
 }
 
 void CPosition::LookDownward(bool bKeyDown)
@@ -234,8 +241,8 @@ void CPosition::LookDownward(bool bKeyDown)
 	if(bKeyDown)
 	{
 		m_fLookDownSpeed += m_fFrameTime * 5.f;
-		if(m_fLookDownSpeed > m_fFrameTime * 150)
-			m_fLookDownSpeed = m_fFrameTime * 150;
+		if(m_fLookDownSpeed > m_fMaxTurnSpeed / 5.f)
+			m_fLookDownSpeed = m_fMaxTurnSpeed;
 	}
 	else
 	{
@@ -244,8 +251,8 @@ void CPosition::LookDownward(bool bKeyDown)
 			m_fLookDownSpeed = 0;
 	}
 
-	m_fRotationY -= m_fFrameTime * m_fLookDownSpeed;
+	m_fRotationX += m_fFrameTime * m_fLookDownSpeed;
 
-	if(m_fRotationY < 0)
-		m_fRotationY += 360.f;
+	if(m_fRotationX >= 360.f)
+		m_fRotationX -= 360.f;
 }

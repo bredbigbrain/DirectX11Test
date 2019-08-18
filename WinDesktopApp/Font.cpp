@@ -61,29 +61,28 @@ void CFont::BuildVertexArray(void * arrVerticies, const char* lpszSentence, floa
 
 			arrVerticies_[nIndex].m_position = XMFLOAT3((fDrawX + m_pFont[nLetter].m_nSize), (fDrawY - m_fFontHeight), Settings::g_graphics.fScreenNear);  // Bottom m_fRight.
 			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fRight, 1.0f);
-			nIndex++;
+			++nIndex;
 
 			arrVerticies_[nIndex].m_position = XMFLOAT3(fDrawX, (fDrawY - m_fFontHeight), Settings::g_graphics.fScreenNear);  // Bottom m_fLeft.
 			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fLeft, 1.0f);
-			nIndex++;
+			++nIndex;
 
 			// Second triangle in quad.
 			arrVerticies_[nIndex].m_position = XMFLOAT3(fDrawX, fDrawY, Settings::g_graphics.fScreenNear);  // Top m_fLeft.
 			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fLeft, 0.0f);
-			nIndex++;
+			++nIndex;
 
 			arrVerticies_[nIndex].m_position = XMFLOAT3(fDrawX + m_pFont[nLetter].m_nSize, fDrawY, Settings::g_graphics.fScreenNear);  // Top m_fRight.
 			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fRight, 0.0f);
-			nIndex++;
+			++nIndex;
 
 			arrVerticies_[nIndex].m_position = XMFLOAT3((fDrawX + m_pFont[nLetter].m_nSize), (fDrawY - m_fFontHeight), Settings::g_graphics.fScreenNear);  // Bottom m_fRight.
 			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fRight, 1.0f);
-			nIndex++;
+			++nIndex;
 
 			fDrawX += m_pFont[nLetter].m_nSize + 1.f;
 		}
 	}
-
 }
 
 int CFont::GetSentencePixelLenght(char * lpszSentence)
