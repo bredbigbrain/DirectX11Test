@@ -1,11 +1,14 @@
-#include"Debug.h"
-#include<vector>
-#include<fstream>
-#include<chrono>
-#include<ctime>
-#include<time.h>
-#include"Settings.h"
-#include"Globals.h"
+#include "Debug.h"
+#include <vector>
+#include <fstream>
+#include <chrono>
+#include <ctime>
+#include <time.h>
+#include <restrictederrorinfo.h>
+#include <roerrorapi.h>
+#include <comdef.h>
+#include "Settings.h"
+#include "Globals.h"
 
 namespace Debug
 {
@@ -106,6 +109,46 @@ namespace Debug
 		}
 		vecFrameLog.clear();
 	}
+
+	static bool bFirstReturn{true};
+	std::string GetErrorDesc(HRESULT hResult, bool bFromReturn)
+	{
+		if(!bFirstReturn && bFromReturn)
+			return "";
+		return GetErrorDesc(hResult);
+	}
+
+	std::string GetErrorDesc(HRESULT hResult)
+	{
+		IRestrictedErrorInfo* pInfo{nullptr};
+		if(::GetRestrictedErrorInfo(&pInfo) == S_OK)
+		{
+			if(pInfo)
+			{
+				BSTR bstrErrDesc;
+				if(pInfo->GetErrorDetails(&bstrErrDesc, &hResult, nullptr, nullptr) == S_OK)
+				{
+					if(bstrErrDesc)
+					{
+						_bstr_t b(bstrErrDesc);
+						return (char*)b;
+					}
+				}
+			}
+		}
+
+		WCHAR* wlpszError = new WCHAR[Debug::MAX_LOG_LENGTH];
+		if(FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, HRESULT_CODE(hResult), 0, wlpszError, Debug::MAX_LOG_LENGTH, nullptr) != 0)
+		{
+			_bstr_t b(wlpszError);
+			delete[] wlpszError;
+			return (char*)b;
+		}
+
+		delete[] wlpszError;
+		return "";
+	}
+
 
 
 //////////////////////////////////////////////////////////////////////////////

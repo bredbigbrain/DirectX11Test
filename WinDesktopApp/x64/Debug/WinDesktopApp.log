@@ -1,28 +1,6 @@
-﻿  BMP_Image.cpp
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\bmp_image.cpp(37): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\bmp_image.cpp(49): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\bmp_image.cpp(67): warning C4244: '=': conversion from 'short' to '_Ty', possible loss of data
-          with
-          [
-              _Ty=uint8_t
-          ]
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\bmp_image.cpp(68): warning C4244: '=': conversion from 'short' to '_Ty', possible loss of data
-          with
-          [
-              _Ty=uint8_t
-          ]
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\bmp_image.cpp(69): warning C4244: '=': conversion from 'short' to '_Ty', possible loss of data
-          with
-          [
-              _Ty=uint8_t
-          ]
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\bmp_image.cpp(71): warning C4244: '=': conversion from 'short' to '_Ty', possible loss of data
-          with
-          [
-              _Ty=uint8_t
-          ]
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\bmp_image.cpp(120): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\bmp_image.cpp(133): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
-  Camera.cpp
-  ColorShader.cpp
-  CTerrain.cpp
+﻿  System.cpp
+d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\defines.h(5): warning C4005: 'DELETE': macro redefinition
+  c:\program files (x86)\windows kits\10\include\10.0.17763.0\um\winnt.h(8894): note: see previous definition of 'DELETE'
+d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\system.cpp(96): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\system.cpp(96): warning C4244: 'argument': conversion from 'long' to 'float', possible loss of data
+  WinDesktopApp.vcxproj -> D:\YandexDisk\Документы\Stuff\C++ WinDeskApp\x64\Debug\WinDesktopApp.exe

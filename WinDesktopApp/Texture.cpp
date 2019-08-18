@@ -1,6 +1,7 @@
-#include"Texture.h"
-#include<string>
-#include"Debug.h"
+#include "Texture.h"
+#include <string>
+#include "Debug.h"
+#include "Defines.h"
 
 CTexture::CTexture() {}
 
@@ -57,21 +58,9 @@ bool CTexture::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceCon
 
 void CTexture::Shutdown()
 {
-	if (m_pTextureView)
-	{
-		m_pTextureView->Release();
-		m_pTextureView = nullptr;
-	}
-	if (m_pTexture)
-	{
-		m_pTexture->Release();
-		m_pTexture = nullptr;
-	}
-	if (m_pRawTagraData)
-	{
-		delete[] m_pRawTagraData;
-		m_pRawTagraData = nullptr;
-	}
+	RELEASE_AND_NULL(m_pTextureView);
+	RELEASE_AND_NULL(m_pTexture);
+	DELETE_ARR(m_pRawTagraData);
 }
 
 ID3D11ShaderResourceView* CTexture::GetTexture()

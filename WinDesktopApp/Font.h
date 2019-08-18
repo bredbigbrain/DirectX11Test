@@ -35,9 +35,7 @@ public:
 
 private:
 	bool LoadFontData(const char* lpszFileName);
-	void ReleaseFontData();
 	bool LoadTexture(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const char* lpszFileName);
-	void ReleaseTexture();
 
 private:
 	SFont* m_pFont{nullptr};

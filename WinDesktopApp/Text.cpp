@@ -1,6 +1,7 @@
 #include "Text.h"
 #include "Debug.h"
 #include "Globals.h"
+#include "Defines.h"
 
 CText::CText()
 {
@@ -12,7 +13,7 @@ CText::~CText()
 }
 
 bool CText::Initialize(ID3D11Device* pDvice, ID3D11DeviceContext* pDeviceContext, int nScreenWidth, int nScreenHeight, int nMaxLength,
-	bool bEnableShadow, CFont* pFont, char* lpszText, int nPositionX, int nPositionY, XMFLOAT4 color)
+	bool bEnableShadow, CFont* pFont, const char* lpszText, int nPositionX, int nPositionY, XMFLOAT4 color)
 {
 	m_nScreenWidth = nScreenWidth;
 	m_nScreenHeight = nScreenHeight;
@@ -27,26 +28,10 @@ bool CText::Initialize(ID3D11Device* pDvice, ID3D11DeviceContext* pDeviceContext
 
 void CText::Shutdown()
 {
-	if(m_pVertexBuffer)
-	{
-		m_pVertexBuffer->Release();
-		m_pVertexBuffer = nullptr;
-	}
-	if(m_pIndexBuffer)
-	{
-		m_pIndexBuffer->Release();
-		m_pIndexBuffer = nullptr;
-	}
-	if(m_pVertexBuffer2)
-	{
-		m_pVertexBuffer2->Release();
-		m_pVertexBuffer2 = nullptr;
-	}
-	if(m_pIndexBuffer2)
-	{
-		m_pIndexBuffer2->Release();
-		m_pIndexBuffer2 = nullptr;
-	}
+	RELEASE_AND_NULL(m_pVertexBuffer);
+	RELEASE_AND_NULL(m_pIndexBuffer);
+	RELEASE_AND_NULL(m_pVertexBuffer2);
+	RELEASE_AND_NULL(m_pIndexBuffer2);
 }
 
 void CText::Render(ID3D11DeviceContext * pDeviceContext, CShaderManager * pShManager, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrOrtho, ID3D11ShaderResourceView * pFontTexture)
@@ -54,13 +39,15 @@ void CText::Render(ID3D11DeviceContext * pDeviceContext, CShaderManager * pShMan
 	RenderSentence(pDeviceContext, pShManager, matrWorld, matrView, matrOrtho, pFontTexture);
 }
 
-bool CText::UpdateSentence(ID3D11DeviceContext * pDeviceContext, CFont * pFont, char * lpszText, int nPositionX, int nPositionY, XMFLOAT4 color)
+bool CText::UpdateSentence(ID3D11DeviceContext * pDeviceContext, CFont * pFont, const char * lpszText, int nPositionX, int nPositionY, XMFLOAT4 color)
 {
 	m_pixelColor = color;
 
 	size_t nNumLetters = strnlen_s(lpszText, Debug::MAX_LOG_LENGTH);
 	if(nNumLetters > m_nMaxLength)
 		RETURN_AND_LOG(false);
+
+	m_sText = lpszText;
 
 	SVertex* arrVerticies = new SVertex[m_nVertexCount];
 
@@ -71,7 +58,7 @@ bool CText::UpdateSentence(ID3D11DeviceContext * pDeviceContext, CFont * pFont, 
 	float fDrawX = (m_nScreenWidth / 2. * -1.) + nPositionX;
 	float fDrawY = m_nScreenHeight / 2. + nPositionY;
 
-	pFont->BuildVertexArray(arrVerticies, lpszText, fDrawX, fDrawY);
+	pFont->BuildVertexArray(arrVerticies, lpszText, nPositionX, nPositionY);
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	if(FAILED(pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
@@ -103,7 +90,12 @@ bool CText::UpdateSentence(ID3D11DeviceContext * pDeviceContext, CFont * pFont, 
 	return true;											   
 }
 
-bool CText::InitilalizeSentence(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, CFont * pFont, char * lpszText, int nPositionX, int nPositionY, XMFLOAT4 color)
+const char* CText::GetText()
+{
+	return m_sText.c_str();
+}
+
+bool CText::InitilalizeSentence(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext, CFont * pFont, const char * lpszText, int nPositionX, int nPositionY, XMFLOAT4 color)
 {
 	m_nVertexCount = m_nIndexCount = 6 * m_nMaxLength;
 
@@ -128,39 +120,58 @@ bool CText::InitilalizeSentence(ID3D11Device * pDevice, ID3D11DeviceContext * pD
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
-	if(FAILED(pDevice->CreateBuffer(&vertexBufferDesc, &vertexData, &m_pVertexBuffer)))
-		RETURN_AND_LOG(false);
+	ON_FAIL_LOG_AND_RETURN(pDevice->CreateBuffer(&vertexBufferDesc, &vertexData, &m_pVertexBuffer));
 
 	D3D11_BUFFER_DESC indexBufferDesc;
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_nIndexCount;
+	indexBufferDesc.ByteWidth = sizeof(unsigned int) * m_nIndexCount;
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
 	indexBufferDesc.StructureByteStride = 0;
 
 	D3D11_SUBRESOURCE_DATA indexData;
-	indexData.pSysMem = arrIndicies;
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
+	indexData.pSysMem = arrIndicies;
 
-	if(FAILED(pDevice->CreateBuffer(&indexBufferDesc, &indexData, &m_pIndexBuffer)))
-		RETURN_AND_LOG(false);
+	ON_FAIL_LOG_AND_RETURN(pDevice->CreateBuffer(&indexBufferDesc, &indexData, &m_pIndexBuffer));
 
 	if(m_bEnableShadow)
 	{
-		if(FAILED(pDevice->CreateBuffer(&vertexBufferDesc, &vertexData, &m_pVertexBuffer2)))
-			RETURN_AND_LOG(false);
-		if(FAILED(pDevice->CreateBuffer(&indexBufferDesc, &indexData, &m_pIndexBuffer2)))
-			RETURN_AND_LOG(false);
+		ON_FAIL_LOG_AND_RETURN(pDevice->CreateBuffer(&vertexBufferDesc, &vertexData, &m_pVertexBuffer2));
+		ON_FAIL_LOG_AND_RETURN(pDevice->CreateBuffer(&indexBufferDesc, &indexData, &m_pIndexBuffer2));
 	}
 
-	delete[] arrVerticies;	arrVerticies = nullptr;
-	delete[] arrIndicies;	arrIndicies = nullptr;
+	delete[] arrVerticies;
+	delete[] arrIndicies;
 
 	if(!UpdateSentence(pDeviceContext, pFont, lpszText, nPositionX, nPositionY, color))
 		RETURN_AND_LOG(false);
 
 	return true;
+}
+
+void CText::RenderSentence(ID3D11DeviceContext * pDeviceContext, CShaderManager * pShManager
+	, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrOrtho, ID3D11ShaderResourceView * pFontTexture)
+{
+	unsigned int nStride = sizeof(SVertex);
+	unsigned int nOffset = 0;
+
+	if(m_bEnableShadow)
+	{
+		XMFLOAT4 shadowColor(0.f, 0.f, 0.f, 1.f);
+		pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer2, &nStride, &nOffset);
+		pDeviceContext->IASetIndexBuffer(m_pIndexBuffer2, DXGI_FORMAT_R32_UINT, 0);
+		pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		pShManager->RenderFontShader(pDeviceContext, m_nIndexCount, matrWorld, matrView, matrOrtho, pFontTexture, shadowColor);
+	}
+
+	pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &nStride, &nOffset);
+	pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	pShManager->RenderFontShader(pDeviceContext, m_nIndexCount, matrWorld, matrView, matrOrtho, pFontTexture, m_pixelColor);
 }
 															   

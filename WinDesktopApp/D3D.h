@@ -11,6 +11,7 @@ using namespace DirectX;
 class D3D
 {
 public:
+
 	D3D();
 	~D3D();
 
@@ -26,24 +27,44 @@ public:
 
 	void GetProjectionMatrix(XMMATRIX&);
 	void GetWorldMatrix(XMMATRIX&);
-	void GetOrthoMatrix(XMMATRIX&);
+	XMMATRIX GetOrthoMatrix();
 
+	size_t GetVideoCadrDescLenght() const;
 	void GetVideoCardInfo(char* szCardName, int& nMemoryMb);
 
+	void TurnZBufferOn();
+	void TurnZBufferOff();
+
+	void EnableAlphaBlending();
+	void DisableAlphaBlending();
+	void EnableAlphaToCoverageBlending();
+
+	void TurnCullingOn();
+	void TurnCullingOff();
+
+	void EnableWireframe();
+	void DisableWireframe();
+
 private:
-	bool m_bVsyncEnabled{ false };
+	bool m_bVsyncEnabled{false};
 	int m_nVideoCardMemory{0};
 	char m_szVideoCardDescription[128]{};
-	IDXGISwapChain* m_pSwapChain = nullptr;
-	ID3D11Device* m_pDevice = nullptr;
-	ID3D11DeviceContext* m_pDeviceContext = nullptr;
-	ID3D11RenderTargetView* m_pRenderTargetView = nullptr;
-	ID3D11Texture2D* m_pDepthStencilBuffer = nullptr;
-	ID3D11DepthStencilState* m_pDepthStencilState = nullptr;
-	ID3D11DepthStencilView* m_pDepthStencilView = nullptr;
-	ID3D11RasterizerState* m_pRasterState = nullptr;
+	IDXGISwapChain* m_pSwapChain{nullptr};
+	ID3D11Device* m_pDevice{nullptr};
+	ID3D11DeviceContext* m_pDeviceContext{nullptr};
+	ID3D11RenderTargetView* m_pRenderTargetView{nullptr};
+	ID3D11Texture2D* m_pDepthStencilBuffer{nullptr};
+	ID3D11DepthStencilState* m_pDepthStencilState{nullptr};
+	ID3D11DepthStencilState* m_pDepthDisabledStencilState{nullptr};
+	ID3D11DepthStencilView* m_pDepthStencilView{nullptr};
+	ID3D11RasterizerState* m_pRasterState{nullptr};
+	ID3D11RasterizerState* m_pRasterStateNoCulling{nullptr};
+	ID3D11RasterizerState* m_pRasterStateWireframe{nullptr};
 	XMMATRIX m_matrProjection{};
 	XMMATRIX m_matrWorld{};
 	XMMATRIX m_matrOrtho{};
+	ID3D11BlendState* m_pAlphaEnableBlendingState{nullptr};
+	ID3D11BlendState* m_pAlphaDisableBlendingState{nullptr};
+	ID3D11BlendState* m_pAlphaEnableBlendingState2{nullptr};
 };
 

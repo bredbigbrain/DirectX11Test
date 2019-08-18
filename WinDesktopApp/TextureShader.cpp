@@ -1,24 +1,24 @@
 #include "TextureShader.h"
 #include "Globals.h"
 #include "Debug.h"
+#include "Defines.h"
+
+CTextureShader::CTextureShader() {}
 
 
-TextureShader::TextureShader() {}
+CTextureShader::~CTextureShader() {}
 
-
-TextureShader::~TextureShader() {}
-
-bool TextureShader::Initialize(ID3D11Device* pDevice, HWND hwnd)
+bool CTextureShader::Initialize(ID3D11Device* pDevice, HWND hwnd)
 {
 	return InitializeShader(pDevice, hwnd, L"Shaders/Texture_VS.hlsl", L"Shaders/Texture_PS.hlsl");
 }
 
-void TextureShader::Shutdown()
+void CTextureShader::Shutdown()
 {
 	ShutdownShader();
 }
 
-bool TextureShader::Render(ID3D11DeviceContext* pDeviceContext, int nIndexCount, XMMATRIX matrWorld
+bool CTextureShader::Render(ID3D11DeviceContext* pDeviceContext, int nIndexCount, XMMATRIX matrWorld
 	, XMMATRIX matrView, XMMATRIX matrProjection, ID3D11ShaderResourceView* pTexture)
 {
 	if (!SetShaderParameters(pDeviceContext, matrWorld, matrView, matrProjection, pTexture))
@@ -28,7 +28,7 @@ bool TextureShader::Render(ID3D11DeviceContext* pDeviceContext, int nIndexCount,
 	return true;
 }
 
-bool TextureShader::InitializeShader(ID3D11Device* pDevice, HWND hwnd, const WCHAR* szPathVS, const WCHAR* szPathPS)
+bool CTextureShader::InitializeShader(ID3D11Device* pDevice, HWND hwnd, const WCHAR* szPathVS, const WCHAR* szPathPS)
 {
 	ID3D10Blob* pVertexShaderBuffer{nullptr};
 	if (!CompileShaders(pDevice, hwnd, szPathVS, szPathPS, &pVertexShaderBuffer))
@@ -54,23 +54,10 @@ bool TextureShader::InitializeShader(ID3D11Device* pDevice, HWND hwnd, const WCH
 
 	unsigned int nNumElements = sizeof(arrInputLayout) / sizeof(arrInputLayout[0]);
 
-	if(FAILED(pDevice->CreateInputLayout(arrInputLayout, nNumElements, pVertexShaderBuffer->GetBufferPointer()
-			, pVertexShaderBuffer->GetBufferSize(), &m_pInputLayout)))
-		RETURN_AND_LOG(false);
+	ON_FAIL_LOG_AND_RETURN(pDevice->CreateInputLayout(arrInputLayout, nNumElements, pVertexShaderBuffer->GetBufferPointer()
+		, pVertexShaderBuffer->GetBufferSize(), &m_pInputLayout));
 
 	pVertexShaderBuffer->Release();
-
-	D3D11_BUFFER_DESC matrixBufferDesc;
-
-	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	matrixBufferDesc.ByteWidth = sizeof(Math3DNS::MatrixBuffer_t);
-	matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	matrixBufferDesc.MiscFlags = 0;
-	matrixBufferDesc.StructureByteStride = 0;
-
-	if(FAILED(pDevice->CreateBuffer(&matrixBufferDesc, NULL, &m_pMatrixBuffer)))
-		RETURN_AND_LOG(false);
 
 	D3D11_SAMPLER_DESC samplerDesc;
 
@@ -88,25 +75,20 @@ bool TextureShader::InitializeShader(ID3D11Device* pDevice, HWND hwnd, const WCH
 	samplerDesc.MinLOD = 0;
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	if (FAILED(pDevice->CreateSamplerState(&samplerDesc, &m_pSampleState)))
-		RETURN_AND_LOG(false);
+	ON_FAIL_LOG_AND_RETURN(pDevice->CreateSamplerState(&samplerDesc, &m_pSampleState));
 
-	return true;
+	return InitializeMatrixBuffer(pDevice);
 }
 
-void TextureShader::ShutdownShader() 
+void CTextureShader::ShutdownShader() 
 {
-	if (m_pSampleState)
-	{
-		m_pSampleState->Release();
-		m_pSampleState = {nullptr};
-	}
+	RELEASE_AND_NULL(m_pSampleState);
 
 	ShaderBase::ShutdownShader();
 }
 
 
-bool TextureShader::SetShaderParameters(ID3D11DeviceContext* pDeviceContext, XMMATRIX matrWorld
+bool CTextureShader::SetShaderParameters(ID3D11DeviceContext* pDeviceContext, XMMATRIX matrWorld
 	, XMMATRIX matrView, XMMATRIX matrProjection, ID3D11ShaderResourceView* pTexture)
 {
 	if (!SetMatrixBuffer(pDeviceContext, matrWorld, matrView, matrProjection))
@@ -116,7 +98,7 @@ bool TextureShader::SetShaderParameters(ID3D11DeviceContext* pDeviceContext, XMM
 	return true;
 }
 
-void TextureShader::RenderShader(ID3D11DeviceContext* pDeviceContext, int nIndexCount)
+void CTextureShader::RenderShader(ID3D11DeviceContext* pDeviceContext, int nIndexCount)
 {
 	pDeviceContext->IASetInputLayout(m_pInputLayout);
 

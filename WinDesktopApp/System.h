@@ -1,12 +1,13 @@
 #pragma once
 #define WIN32_LEAN_AND_MEAN
 
-#include<windows.h>
-#include"Input.h"
-#include"Graphics.h"
-#include"Time.h"
-#include"Settings.h"
-#include"Debug.h"
+#include <windows.h>
+#include "Input.h"
+#include "D3D.h"
+#include "Time.h"
+#include "Settings.h"
+#include "Zone.h"
+#include "ShaderManager.h"
 
 class System
 {
@@ -31,8 +32,10 @@ private:
 	HINSTANCE m_hinstance;
 	HWND m_hwnd;
 
-	Input* m_pInput = nullptr;
-	Graphics* m_pGraphics = nullptr;
+	CShaderManager* m_pShManager{nullptr};
+	D3D* m_pDirect3D{nullptr};
+	CZone* m_pZone{nullptr};
+	CInput* m_pInput{nullptr};
 };
 
 static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);

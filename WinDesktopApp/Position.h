@@ -1,6 +1,5 @@
 #pragma once
 
-#include<math.h>
 #include<DirectXMath.h>
 
 using namespace DirectX;
@@ -8,9 +7,6 @@ using namespace DirectX;
 class CPosition
 {
 public:
-	CPosition();
-	~CPosition();
-
 	void SetPosition(float fX, float fY, float fZ);
 	void SetPosition(CPosition* pPosition);
 

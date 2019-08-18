@@ -8,24 +8,25 @@
 
 using namespace DirectX;
 
-class TextureShader : public ShaderBase
+class CTextureShader : public ShaderBase
 {
 public:
-	TextureShader();
-	~TextureShader();
+	CTextureShader();
+	~CTextureShader();
 
-	bool Initialize(ID3D11Device* pDevice, HWND hwnd);
-	void Shutdown();
+	virtual bool Initialize(ID3D11Device* pDevice, HWND hwnd);
+	virtual void Shutdown();
 	bool Render(ID3D11DeviceContext* pDeviceContext, int, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView* pTexture);
 
-private:
-	bool InitializeShader(ID3D11Device* pDevice, HWND, const WCHAR*, const WCHAR*);
-	virtual void ShutdownShader();
-	void RenderShader(ID3D11DeviceContext* pDiviceContext, int);
+protected:
+	virtual bool InitializeShader(ID3D11Device* pDevice, HWND hwnd, const WCHAR* szPathVS, const WCHAR* szPathPS);
+	virtual void ShutdownShader() override;
+	virtual void RenderShader(ID3D11DeviceContext* pDiviceContext, int nIndexCount);
 
-	bool SetShaderParameters(ID3D11DeviceContext* pDeviceContext, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView* pTexture);
+	bool SetShaderParameters(ID3D11DeviceContext* pDeviceContext, XMMATRIX matrWorld
+		, XMMATRIX matrView, XMMATRIX matrProjection, ID3D11ShaderResourceView* pTexture);
 
-private:
+protected:
 	ID3D11SamplerState* m_pSampleState{nullptr};
 };
 

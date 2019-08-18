@@ -1,15 +1,8 @@
 #include "Position.h"
-#include"Globals.h"
+#include "Globals.h"
+#include <math.h>
 
 
-CPosition::CPosition()
-{
-}
-
-
-CPosition::~CPosition()
-{
-}
 
 void CPosition::SetPosition(float fX, float fY, float fZ)
 {

@@ -15,9 +15,6 @@ private:
 	};
 
 public:
-	CTerrain();
-	~CTerrain();
-
 	bool Initialize(ID3D11Device* pDevice);
 	void Shutdown();
 	bool Render(ID3D11DeviceContext* pDeviceContext);
@@ -26,7 +23,6 @@ public:
 
 private:
 	bool InitializeBuffers(ID3D11Device* pDevice);
-	void ShutdownBuffers();
 	void RenderBuffers(ID3D11DeviceContext* pDeviceContext);
 
 private:

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ShaderBase.h"
 #include "Globals.h"
-
+#include "Defines.h"
 
 ShaderBase::ShaderBase()
 {
@@ -26,7 +26,7 @@ bool ShaderBase::CompileShaders(ID3D11Device* pDevice, HWND hwnd, const WCHAR* s
 			OutputShaderErrMsg(pErrorMessage, hwnd, szPathVS);
 		else
 			MessageBox(hwnd, szPathVS, L"Missing Shader File", MB_OK | MB_ICONWARNING);
-		RETURN_AND_LOG(false);
+		RETURN_AND_LOG_ERR(false, result);
 	}
 
 	result = D3DCompileFromFile(szPathPS, NULL, NULL, "psMain", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
@@ -37,16 +37,14 @@ bool ShaderBase::CompileShaders(ID3D11Device* pDevice, HWND hwnd, const WCHAR* s
 			OutputShaderErrMsg(pErrorMessage, hwnd, szPathPS);
 		else
 			MessageBox(hwnd, szPathPS, L"Missing Shader File", MB_OK | MB_ICONWARNING);
-		RETURN_AND_LOG(false);
+		RETURN_AND_LOG_ERR(false, result);
 	}
 
 	result = pDevice->CreateVertexShader((*ppVertexShaderBuffer)->GetBufferPointer(), (*ppVertexShaderBuffer)->GetBufferSize(), NULL, &m_pVertexShader);
-	if (FAILED(result))
-		RETURN_AND_LOG(false);
+	ON_FAIL_LOG_AND_RETURN(result);
 
 	result = pDevice->CreatePixelShader(pPixelShaderBuffer->GetBufferPointer(), pPixelShaderBuffer->GetBufferSize(), NULL, &m_pPixelShader);
-	if (FAILED(result))
-		RETURN_AND_LOG(false);
+	ON_FAIL_LOG_AND_RETURN(result);
 
 	pPixelShaderBuffer->Release();
 	return true;
@@ -75,26 +73,10 @@ void ShaderBase::OutputShaderErrMsg(ID3D10Blob* pErrorMessage, HWND hwnd, const 
 
 void ShaderBase::ShutdownShader()
 {
-	if (m_pMatrixBuffer)
-	{
-		m_pMatrixBuffer->Release();
-		m_pMatrixBuffer = nullptr;
-	}
-	if (m_pInputLayout)
-	{
-		m_pInputLayout->Release();
-		m_pInputLayout = nullptr;
-	}
-	if (m_pPixelShader)
-	{
-		m_pPixelShader->Release();
-		m_pPixelShader = nullptr;
-	}
-	if (m_pVertexShader)
-	{
-		m_pVertexShader->Release();
-		m_pVertexShader = nullptr;
-	}
+	RELEASE_AND_NULL(m_pMatrixBuffer);
+	RELEASE_AND_NULL(m_pInputLayout);
+	RELEASE_AND_NULL(m_pPixelShader);
+	RELEASE_AND_NULL(m_pVertexShader);
 }
 
 bool ShaderBase::SetMatrixBuffer(ID3D11DeviceContext* pDeviceContext, XMMATRIX matrWorld
@@ -105,8 +87,7 @@ bool ShaderBase::SetMatrixBuffer(ID3D11DeviceContext* pDeviceContext, XMMATRIX m
 	matrProjection = XMMatrixTranspose(matrProjection);
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	if (FAILED(pDeviceContext->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
-		RETURN_AND_LOG(false);
+	ON_FAIL_LOG_AND_RETURN(pDeviceContext->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
 
 	Math3DNS::MatrixBuffer_t* dataPtr = (Math3DNS::MatrixBuffer_t*)mappedResource.pData;
 
@@ -118,6 +99,22 @@ bool ShaderBase::SetMatrixBuffer(ID3D11DeviceContext* pDeviceContext, XMMATRIX m
 
 	unsigned int bufferNumber = 0;
 	pDeviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_pMatrixBuffer);
+
+	return true;
+}
+
+bool ShaderBase::InitializeMatrixBuffer(ID3D11Device* pDevice)
+{
+	D3D11_BUFFER_DESC matrixBufferDesc;
+
+	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	matrixBufferDesc.ByteWidth = sizeof(Math3DNS::MatrixBuffer_t);
+	matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	matrixBufferDesc.MiscFlags = 0;
+	matrixBufferDesc.StructureByteStride = 0;
+
+	ON_FAIL_LOG_AND_RETURN(pDevice->CreateBuffer(&matrixBufferDesc, NULL, &m_pMatrixBuffer));
 
 	return true;
 }

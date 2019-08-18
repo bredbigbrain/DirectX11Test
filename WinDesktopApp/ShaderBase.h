@@ -18,6 +18,7 @@ protected:
 	bool CompileShaders(ID3D11Device* pDevice, HWND hwnd, const WCHAR* szPathVS, const WCHAR* szPathPS, ID3D10Blob** ppVertexShaderBuffer);
 	bool SetMatrixBuffer(ID3D11DeviceContext* pDeviceContext, XMMATRIX matrWorld
 		, XMMATRIX matrView, XMMATRIX matrProjection);
+	bool InitializeMatrixBuffer(ID3D11Device* pDevice);
 
 	virtual void ShutdownShader();
 

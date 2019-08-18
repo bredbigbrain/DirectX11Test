@@ -1,5 +1,6 @@
 #include "Graphics.h"
 #include "Globals.h"
+#include "Defines.h"
 
 Graphics::Graphics()
 {
@@ -33,7 +34,7 @@ bool Graphics::Initialize(int nScreenWidth, int nScreenHeight, HWND hwnd)
 		return false;
 	}
 
-	m_pTextureShader = new TextureShader();
+	m_pTextureShader = new CTextureShader();
 
 	if(!m_pTextureShader->Initialize(m_pDirect3D->GetDevice(), hwnd))
 	{
@@ -44,31 +45,12 @@ bool Graphics::Initialize(int nScreenWidth, int nScreenHeight, HWND hwnd)
 	return true;
 }
 
-void Graphics::Shutdown() 
+void Graphics::Shutdown()
 {
-	if (m_pTextureShader)
-	{
-		m_pTextureShader->Shutdown();
-		delete m_pTextureShader;
-		m_pTextureShader = nullptr;
-	}
-	if (m_pModel)
-	{
-		m_pModel->Shutdown();
-		delete m_pModel;
-		m_pModel = nullptr;
-	}
-	if (m_pCamera)
-	{
-		delete m_pCamera;
-		m_pCamera = nullptr;
-	}
-	if (m_pDirect3D)
-	{
-		m_pDirect3D->Shutdown();
-		delete m_pDirect3D;
-		m_pDirect3D = nullptr;
-	}
+	SHUTDOWND_DELETE(m_pTextureShader);
+	SHUTDOWND_DELETE(m_pModel);
+	DELETE(m_pCamera);
+	SHUTDOWND_DELETE(m_pDirect3D);
 }
 
 bool Graphics::Frame()

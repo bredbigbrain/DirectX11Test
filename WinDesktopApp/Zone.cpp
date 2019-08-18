@@ -1,5 +1,6 @@
 #include "CZone.h"
-#include"Debug.h"
+#include "Debug.h"
+#include "Defines.h"
 
 
 CZone::CZone()
@@ -16,7 +17,7 @@ bool CZone::Initialize(D3D* pDirect3D, HWND hWnd, int nScreenWidht, int nScreenH
 {
 	m_pUserInterface = new CUserInterface();
 
-	if(m_pUserInterface->Initialize(pDirect3D, nScreenHeight, nScreenWidht))
+	if(!m_pUserInterface->Initialize(pDirect3D, nScreenHeight, nScreenWidht))
 		RETURN_AND_LOG(false);
 
 	m_pCamera = new CCamera();
@@ -43,45 +44,19 @@ bool CZone::Initialize(D3D* pDirect3D, HWND hWnd, int nScreenWidht, int nScreenH
 
 void CZone::Shutdown()
 {
-	if(m_pTerrain)
-	{
-		m_pTerrain->Shutdown();
-		delete m_pTerrain;
-		m_pTerrain = nullptr;
-	}
-
-	if(m_pPosition)
-	{
-		delete m_pPosition;
-		m_pPosition = nullptr;
-	}
-
-	if(m_pCamera)
-	{
-		delete m_pCamera;
-		m_pCamera = nullptr;
-	}
-
-	if(m_pUserInterface)
-	{
-		m_pUserInterface->Shutdown();
-		delete m_pUserInterface;
-		m_pUserInterface = nullptr;
-	}
+	SHUTDOWND_DELETE(m_pTerrain);
+	DELETE(m_pPosition);
+	DELETE(m_pCamera);
+	SHUTDOWND_DELETE(m_pUserInterface);
 }
 
 bool CZone::Frame(D3D* pDirect3D, CInput* pInput, CShaderManager* pShManager, float fDT, int nFPS)
 {
 	HandeMovementInput(pInput, fDT);
 
-	float fPosX = 0, fPosY = 0, fPosZ = 0, fRotX = 0, fRotY = 0, fRotZ = 0;
-
-	m_pPosition->GetPosition(fPosX, fPosY, fPosZ);
-	m_pPosition->GetRotation(fRotX, fRotY, fRotZ);
-
-	if(!m_pUserInterface->Frame(pDirect3D->GetDeviceContext(), nFPS, m_pPosition->GetPosition(), m_pPosition->GetRotation()))
-		RETURN_AND_LOG(false);
 	if(!Render(pDirect3D, pShManager))
+		RETURN_AND_LOG(false);
+	if(!m_pUserInterface->Frame(pDirect3D->GetDeviceContext(), nFPS, m_pPosition->GetPosition(), m_pPosition->GetRotation()))
 		RETURN_AND_LOG(false);
 
 	return true;
@@ -116,7 +91,6 @@ bool CZone::Render(D3D* pDirect3D, CShaderManager* pShManager)
 	XMMATRIX matrWorld, matrProjection, matrOrtho;
 	pDirect3D->GetWorldMatrix(matrWorld);
 	pDirect3D->GetProjectionMatrix(matrProjection);
-	pDirect3D->GetOrthoMatrix(matrOrtho);
 
 	pDirect3D->BeginScene(0.f, 0.f, 0.f, 1.f);
 
@@ -130,7 +104,7 @@ bool CZone::Render(D3D* pDirect3D, CShaderManager* pShManager)
 
 	if(m_bDisplayUI)
 	{
-		if(!m_pUserInterface->Render(pDirect3D, pShManager, matrWorld, m_pCamera->GetBaseViewMatrix(), matrOrtho))
+		if(!m_pUserInterface->Render(pDirect3D, pShManager, matrWorld, m_pCamera->GetBaseViewMatrix(), pDirect3D->GetOrthoMatrix()))
 			RETURN_AND_LOG(false);
 	}
 

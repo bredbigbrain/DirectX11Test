@@ -26,7 +26,7 @@ private:
 	D3D* m_pDirect3D{nullptr};
 	CCamera* m_pCamera{nullptr};
 	Model* m_pModel{nullptr};
-	//ColorShader* m_pColorShader{nullptr};
-	TextureShader* m_pTextureShader{nullptr};
+	CColorShader* m_pColorShader{nullptr};
+	CTextureShader* m_pTextureShader{nullptr};
 };
 

@@ -3,24 +3,24 @@
 #include <xstring>
 #include "Globals.h"
 
-ColorShader::ColorShader() {}
+CColorShader::CColorShader() {}
 
-ColorShader::~ColorShader() {}
+CColorShader::~CColorShader() {}
 
 
-bool ColorShader::Initialize(ID3D11Device* pDevice, HWND hwnd)
+bool CColorShader::Initialize(ID3D11Device* pDevice, HWND hwnd)
 {	
 	return InitializeShader(pDevice, hwnd, L"Shaders/Color_VS.hlsl", L"Shaders/Color_PS.hlsl");
 }
 
 
-void ColorShader::Shutdown()
+void CColorShader::Shutdown()
 {
 	ShutdownShader();
 }
 
 
-bool ColorShader::Render(ID3D11DeviceContext* pDeviceContext, int nIndexCount, XMMATRIX matrWorld, XMMATRIX matrView,
+bool CColorShader::Render(ID3D11DeviceContext* pDeviceContext, int nIndexCount, XMMATRIX matrWorld, XMMATRIX matrView,
 	XMMATRIX matrProjection)
 {
 	if (!SetMatrixBuffer(pDeviceContext, matrWorld, matrView, matrProjection))
@@ -31,7 +31,7 @@ bool ColorShader::Render(ID3D11DeviceContext* pDeviceContext, int nIndexCount, X
 }
 
 
-bool ColorShader::InitializeShader(ID3D11Device* pDevice, HWND hwnd, const WCHAR* vsFileName, const WCHAR* psFileName)
+bool CColorShader::InitializeShader(ID3D11Device* pDevice, HWND hwnd, const WCHAR* vsFileName, const WCHAR* psFileName)
 {
 	ID3D10Blob* pVertexShaderBuffer{nullptr};
 	if (!CompileShaders(pDevice, hwnd, vsFileName, psFileName, &pVertexShaderBuffer))
@@ -59,31 +59,17 @@ bool ColorShader::InitializeShader(ID3D11Device* pDevice, HWND hwnd, const WCHAR
 
 	auto result = pDevice->CreateInputLayout(polygonLayout, nNumElements, pVertexShaderBuffer->GetBufferPointer(),
 		pVertexShaderBuffer->GetBufferSize(), &m_pInputLayout);
-	if (FAILED(result))
-	{
-		RETURN_AND_LOG(false);
-	}
+	
+	ON_FAIL_LOG_AND_RETURN(result);
 
 	pVertexShaderBuffer->Release();
 
-	D3D11_BUFFER_DESC matrixBufferDesc;
-
-	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	matrixBufferDesc.ByteWidth = sizeof(Math3DNS::MatrixBuffer_t);
-	matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	matrixBufferDesc.MiscFlags = 0;
-	matrixBufferDesc.StructureByteStride = 0;
-
-	if (FAILED(pDevice->CreateBuffer(&matrixBufferDesc, NULL, &m_pMatrixBuffer)))
-		RETURN_AND_LOG(false);
-
-	return true;
+	return InitializeMatrixBuffer(pDevice);
 }
 
 
 
-void ColorShader::RenderShader(ID3D11DeviceContext* pDeviceContext, int nIndexCount)
+void CColorShader::RenderShader(ID3D11DeviceContext* pDeviceContext, int nIndexCount)
 {
 	pDeviceContext->IASetInputLayout(m_pInputLayout);
 

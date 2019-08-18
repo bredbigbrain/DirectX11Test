@@ -11,8 +11,8 @@ namespace Math3DNS
 	constexpr float DEGREES_TO_RADIANS(float fDegrees);
 	constexpr float RADIANS_TO_DEGREES(float fRadians);
 
-	inline float DegreesToRadians(float fDegrees);
-	inline float RadiansToDegrees(float fRadians);
+	extern inline float DegreesToRadians(float fDegrees);
+	extern inline float RadiansToDegrees(float fRadians);
 
 	namespace Radians
 	{

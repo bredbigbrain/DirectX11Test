@@ -28,11 +28,9 @@ public:
 
 private:
 	bool InitializeBuffers(ID3D11Device* pDevice);
-	void ShutdownBuffers();
 	void RenderBuffers(ID3D11DeviceContext* pDeviceContext);
 
 	bool LoadTexture(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const char* szTexturePath);
-	void ReleaseTexture();
 
 private:
 	ID3D11Buffer* m_pVertexBuffer{nullptr};

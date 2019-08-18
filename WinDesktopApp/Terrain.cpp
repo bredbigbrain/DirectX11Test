@@ -1,15 +1,6 @@
 #include "Terrain.h"
-#include"Debug.h"
-
-
-CTerrain::CTerrain()
-{
-}
-
-
-CTerrain::~CTerrain()
-{
-}
+#include "Debug.h"
+#include "Defines.h"
 
 
 bool CTerrain::Initialize(ID3D11Device* pDevice)
@@ -21,9 +12,9 @@ bool CTerrain::Initialize(ID3D11Device* pDevice)
 
 void CTerrain::Shutdown()
 {
-	ShutdownBuffers();
+	RELEASE_AND_NULL(m_pVertexBuffer);
+	RELEASE_AND_NULL(m_pIndexBuffer);
 }
-
 
 bool CTerrain::Render(ID3D11DeviceContext* pDeviceContext)
 {
@@ -36,7 +27,6 @@ size_t CTerrain::GetIndexCount()
 {
 	return m_nIndexCount;
 }
-
 
 bool CTerrain::InitializeBuffers(ID3D11Device* pDevice)
 {
@@ -143,43 +133,27 @@ bool CTerrain::InitializeBuffers(ID3D11Device* pDevice)
 	vertexSubData.SysMemPitch = 0;
 	vertexSubData.SysMemSlicePitch = 0;
 
-	if(FAILED(pDevice->CreateBuffer(&vertexBufferDesc, &vertexSubData, &m_pVertexBuffer)))
-		RETURN_AND_LOG(false);
+	ON_FAIL_LOG_AND_RETURN(pDevice->CreateBuffer(&vertexBufferDesc, &vertexSubData, &m_pVertexBuffer));
 
 	D3D11_BUFFER_DESC indexBufferDesc;
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(unsigned int) * m_nIndexCount;
-	vertexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = 0;
-	vertexBufferDesc.MiscFlags = 0;
-	vertexBufferDesc.StructureByteStride = 0;
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_nIndexCount;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.StructureByteStride = 0;
 
 	D3D11_SUBRESOURCE_DATA indexSubData;
-	vertexSubData.pSysMem = arrIndicies;
-	vertexSubData.SysMemPitch = 0;
-	vertexSubData.SysMemSlicePitch = 0;
+	indexSubData.SysMemPitch = 0;
+	indexSubData.SysMemSlicePitch = 0;
+	indexSubData.pSysMem = arrIndicies;
 
-	if(FAILED(pDevice->CreateBuffer(&indexBufferDesc, &indexSubData, &m_pIndexBuffer)))
-		RETURN_AND_LOG(false);
+	ON_FAIL_LOG_AND_RETURN(pDevice->CreateBuffer(&indexBufferDesc, &indexSubData, &m_pIndexBuffer));
 
 	delete[] arrVerticies;
 	delete[] arrIndicies;
 
 	return true;
-}
-
-void CTerrain::ShutdownBuffers()
-{
-	if(m_pVertexBuffer)
-	{
-		m_pVertexBuffer->Release();
-		m_pVertexBuffer = nullptr;
-	}
-	if(m_pIndexBuffer)
-	{
-		m_pIndexBuffer->Release();
-		m_pIndexBuffer = nullptr;
-	}
 }
 
 void CTerrain::RenderBuffers(ID3D11DeviceContext* pDeviceContext)

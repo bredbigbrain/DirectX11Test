@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "System.h"
 #include "Globals.h"
+#include "Debug.h"
+#include "Defines.h"
 
 System::System()
 {
@@ -19,39 +21,43 @@ bool System::Initialize()
 	InitializeWindows(nScreenWidth, nScreenHeight);
 
 	settings.Initialize();
+	Time::Initialize();
 
 	m_pInput = new CInput();
-
 	m_pInput->Initialize();
 
-	m_pGraphics = new Graphics();
+	m_pDirect3D = new D3D();
 
-	if (!m_pGraphics->Initialize(nScreenWidth, nScreenHeight, m_hwnd))
+	if(!m_pDirect3D->Initialize(nScreenWidth, nScreenHeight, Settings::g_graphics.bVSync, m_hwnd
+		, Settings::g_graphics.bFullScreen, Settings::g_graphics.fScreenDepth, Settings::g_graphics.fScreenNear))
 	{
-		ShowCursor(true);
-		MessageBox(m_hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
-		RETURN_AND_LOG(false);
+		QUIK_LOG_TM("ERROR", "Graphics::Initialize: Could not initialize Direct3D!");
+		return false;
 	}
 
-	Time::Initialize();
+	m_pZone = new CZone();
+	if(!m_pZone->Initialize(m_pDirect3D, m_hwnd, nScreenWidth, nScreenHeight, Settings::g_graphics.fScreenDepth))
+	{
+		QUIK_LOG_TM("ERROR", "Graphics::Initialize: Could not initialize Zone!");
+		return false;
+	}
+
+	m_pShManager = new CShaderManager();
+	if(!m_pShManager->Initialize(m_pDirect3D->GetDevice(), m_hwnd))
+	{
+		QUIK_LOG_TM("ERROR", "Graphics::Initialize: Could not initialize ShaderManager!");
+		return false;
+	}
 
 	return true;
 }
 
 void System::Shutdown()
 {
-	if (m_pGraphics)
-	{
-		m_pGraphics->Shutdown();
-		delete m_pGraphics;
-		m_pGraphics = nullptr;
-	}
-
-	if (m_pInput)
-	{
-		delete m_pInput;
-		m_pInput = nullptr;
-	}
+	SHUTDOWND_DELETE(m_pZone);
+	SHUTDOWND_DELETE(m_pShManager);
+	SHUTDOWND_DELETE(m_pDirect3D);
+	DELETE(m_pInput);
 
 	ShutdownWindows();	
 	settings.Shutdown();
@@ -87,9 +93,10 @@ bool System::Frame()
 	if (m_pInput->IsKeyDown(VK_ESCAPE))
 		return false;
 
-	if (!m_pGraphics->Frame())
+	if (!m_pZone->Frame(m_pDirect3D, m_pInput, m_pShManager, Time::GetDtMS(), Settings::g_graphics.dFramesPerSecond))
 		RETURN_AND_LOG(false);
 
+	m_pInput->OnEndOfFrame();
 	m_pInput->OnEndOfFrame();
 	Debug::OnEndOfFrame();
 	Time::OnFrameEnd();
@@ -116,7 +123,7 @@ void System::InitializeWindows(int& nScreenWidth, int& nScreenHeight)
 {
 	pApplicationHandle = this;
 	m_hinstance = GetModuleHandle(NULL);
-	m_szApplicationName = L"Desctop App";
+	m_szApplicationName = L"Desktop App";
 
 	WNDCLASSEX wc;
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;

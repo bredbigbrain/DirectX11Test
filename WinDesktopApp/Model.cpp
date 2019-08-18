@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Model.h"
+#include "Defines.h"
 
 Model::Model()
 {
@@ -28,8 +29,10 @@ void Model::Render(ID3D11DeviceContext* pDeviceContext)
 
 void Model::Shutdown()
 {
-	ReleaseTexture();
-	ShutdownBuffers();
+	SHUTDOWND_DELETE(m_pTexture);
+
+	RELEASE_AND_NULL(m_pVertexBuffer);
+	RELEASE_AND_NULL(m_pIndexBuffer);
 }
 
 int Model::GetIndexCount()
@@ -108,30 +111,6 @@ bool Model::LoadTexture(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceConte
 	m_pTexture = new CTexture;
 
 	return m_pTexture->Initialize(pDevice, pDeviceContext, szTexturePath);
-}
-
-void Model::ShutdownBuffers()
-{
-	if (m_pVertexBuffer)
-	{
-		m_pVertexBuffer->Release();
-		m_pVertexBuffer = nullptr;
-	}
-	if (m_pIndexBuffer)
-	{
-		m_pIndexBuffer->Release();
-		m_pIndexBuffer = nullptr;
-	}
-}
-
-void Model::ReleaseTexture()
-{
-	if (m_pTexture)
-	{
-		m_pTexture->Shutdown();
-		delete m_pTexture;
-		m_pTexture = nullptr;
-	}
 }
 
 void Model::RenderBuffers(ID3D11DeviceContext* pDeviceContext)

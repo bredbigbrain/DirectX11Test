@@ -7,11 +7,11 @@
 
 using namespace DirectX;
 
-class ColorShader : public ShaderBase
+class CColorShader : public ShaderBase
 {
 public:
-	ColorShader();
-	~ColorShader();
+	CColorShader();
+	~CColorShader();
 
 	bool Initialize(ID3D11Device* pDeviceContext, HWND hwnd);
 	void Shutdown();
