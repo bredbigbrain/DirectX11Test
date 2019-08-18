@@ -43,6 +43,7 @@ namespace Math3DNS
 namespace Settings
 {
 	const char* SETTINGS_FILE_PATH{ "Settings.bytes" };
+	extern const char* TERRAIN_DATA_FILE_PATH{"TerrainData.txt"};
 	const unsigned int VERSION{0};
 
 	SGraphics_v1 g_graphics;

@@ -11,6 +11,10 @@ using namespace DirectX;
 class D3D
 {
 public:
+	enum class ERasterState
+	{
+		SOLID, SOLID_NOCULLING, WIREFRAME 
+	};
 
 	D3D();
 	~D3D();
@@ -32,6 +36,8 @@ public:
 	size_t GetVideoCadrDescLenght() const;
 	void GetVideoCardInfo(char* szCardName, int& nMemoryMb);
 
+	ERasterState GetRasterState();
+
 	void TurnZBufferOn();
 	void TurnZBufferOff();
 
@@ -46,6 +52,7 @@ public:
 	void DisableWireframe();
 
 private:
+	ERasterState m_eRasterState;
 	bool m_bVsyncEnabled{false};
 	int m_nVideoCardMemory{0};
 	char m_szVideoCardDescription[128]{};

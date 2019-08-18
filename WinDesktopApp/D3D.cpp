@@ -184,21 +184,14 @@ bool D3D::Initialize(int nScreenWidth, int nScreenHeight, bool bVsync, HWND hwnd
 	ON_FAIL_LOG_AND_RETURN(m_pDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterState));
 
 	m_pDeviceContext->RSSetState(m_pRasterState);
+	m_eRasterState = ERasterState::SOLID;
 
 	rasterizerDesc.CullMode = D3D11_CULL_NONE;
 
 	ON_FAIL_LOG_AND_RETURN(m_pDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterStateNoCulling));
 
-	rasterizerDesc.AntialiasedLineEnable = FALSE;
 	rasterizerDesc.CullMode = D3D11_CULL_BACK;
-	rasterizerDesc.DepthBias = 0;
-	rasterizerDesc.DepthBiasClamp = 0.0f;
-	rasterizerDesc.DepthClipEnable = FALSE;
 	rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
-	rasterizerDesc.FrontCounterClockwise = FALSE;
-	rasterizerDesc.MultisampleEnable = FALSE;
-	rasterizerDesc.ScissorEnable = FALSE;
-	rasterizerDesc.SlopeScaledDepthBias = 0.0f;
 
 	ON_FAIL_LOG_AND_RETURN(m_pDevice->CreateRasterizerState(&rasterizerDesc, &m_pRasterStateWireframe));
 
@@ -344,6 +337,11 @@ void D3D::GetVideoCardInfo(char* szCardName, int& nMemoryMb)
 	nMemoryMb = m_nVideoCardMemory;
 }
 
+D3D::ERasterState D3D::GetRasterState()
+{
+	return m_eRasterState;
+}
+
 void D3D::TurnZBufferOn()
 {
 	m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilState, 1);
@@ -375,19 +373,23 @@ void D3D::EnableAlphaToCoverageBlending()
 void D3D::TurnCullingOn()
 {
 	m_pDeviceContext->RSSetState(m_pRasterState);
+	m_eRasterState = ERasterState::SOLID;
 }
 
 void D3D::TurnCullingOff()
 {
 	m_pDeviceContext->RSSetState(m_pRasterStateNoCulling);
+	m_eRasterState = ERasterState::SOLID_NOCULLING;
 }
 
 void D3D::EnableWireframe()
 {
 	m_pDeviceContext->RSSetState(m_pRasterStateWireframe);
+	m_eRasterState = ERasterState::WIREFRAME;
 }
 
 void D3D::DisableWireframe()
 {
 	m_pDeviceContext->RSSetState(m_pRasterState);
+	m_eRasterState = ERasterState::SOLID;
 }

@@ -28,6 +28,7 @@ private:
 	CCamera* m_pCamera{ nullptr };
 	CPosition* m_pPosition{ nullptr };
 	CTerrain* m_pTerrain{ nullptr };
-	bool m_bDisplayUI{ false };
+	bool m_bDisplayUI{false};
+	bool m_bWireFrame{ false };
 };
 

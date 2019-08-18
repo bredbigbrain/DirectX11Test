@@ -1,7 +1,7 @@
 #include "CZone.h"
 #include "Debug.h"
 #include "Defines.h"
-
+#include "Globals.h"
 
 CZone::CZone()
 {
@@ -22,7 +22,7 @@ bool CZone::Initialize(D3D* pDirect3D, HWND hWnd, int nScreenWidht, int nScreenH
 
 	m_pCamera = new CCamera();
 	
-	m_pCamera->SetPosition(128.f, 5.f, -10.f);
+	m_pCamera->SetPosition(128.f, 10.f, -10.f);
 	m_pCamera->Render();
 	m_pCamera->RenderBaseViewMatrix();
 
@@ -33,10 +33,11 @@ bool CZone::Initialize(D3D* pDirect3D, HWND hWnd, int nScreenWidht, int nScreenH
 
 	m_pTerrain = new CTerrain();
 
-	if(!m_pTerrain->Initialize(pDirect3D->GetDevice()))
+	if(!m_pTerrain->Initialize(pDirect3D->GetDevice(), Settings::TERRAIN_DATA_FILE_PATH))
 		RETURN_AND_LOG(false);
 
 	m_bDisplayUI = true;
+	//m_bWireFrame = true;
 
 	return true;
 }
@@ -82,6 +83,9 @@ void CZone::HandeMovementInput(CInput* pInput, float fDT)
 	if(pInput->IsKeyClicked(VK_F1))
 		m_bDisplayUI = !m_bDisplayUI;
 
+	if(pInput->IsKeyClicked(VK_F2))
+		m_bWireFrame = !m_bWireFrame;
+
 	if(pInput->IsKeyClicked(VK_HOME))
 	{
 		m_pPosition->SetPosition(128.f, 5.f, -10.f);
@@ -100,6 +104,9 @@ bool CZone::Render(D3D* pDirect3D, CShaderManager* pShManager)
 
 	pDirect3D->BeginScene(0.f, 0.f, 0.f, 1.f);
 
+	if(m_bWireFrame)
+		pDirect3D->EnableWireframe();
+
 	m_pTerrain->Render(pDirect3D->GetDeviceContext());
 
 	bool bResult = pShManager->RenderColorShader(pDirect3D->GetDeviceContext(), m_pTerrain->GetIndexCount()
@@ -107,6 +114,9 @@ bool CZone::Render(D3D* pDirect3D, CShaderManager* pShManager)
 
 	if(!bResult)
 		RETURN_AND_LOG(false);
+
+	if(m_bWireFrame)
+		pDirect3D->DisableWireframe();
 
 	if(m_bDisplayUI)
 	{
