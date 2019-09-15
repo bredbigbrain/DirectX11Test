@@ -8,6 +8,7 @@
 #include "Settings.h"
 #include "Zone.h"
 #include "ShaderManager.h"
+#include "TextureManager.h"
 
 class System
 {
@@ -33,6 +34,7 @@ private:
 	HWND m_hwnd;
 
 	CShaderManager* m_pShManager{nullptr};
+	CTextureManager* m_pTexManager{nullptr};
 	D3D* m_pDirect3D{nullptr};
 	CZone* m_pZone{nullptr};
 	CInput* m_pInput{nullptr};

@@ -47,10 +47,10 @@ bool Graphics::Initialize(int nScreenWidth, int nScreenHeight, HWND hwnd)
 
 void Graphics::Shutdown()
 {
-	SHUTDOWND_DELETE(m_pTextureShader);
-	SHUTDOWND_DELETE(m_pModel);
+	SHUTDOWN_DELETE(m_pTextureShader);
+	SHUTDOWN_DELETE(m_pModel);
 	DELETE(m_pCamera);
-	SHUTDOWND_DELETE(m_pDirect3D);
+	SHUTDOWN_DELETE(m_pDirect3D);
 }
 
 bool Graphics::Frame()

@@ -25,8 +25,8 @@ constexpr const char* file_name(const char* str) {
 #define QUIK_LOG_M(MESSAGE) {Debug::LogNow("[QUIK LOG]: %s file: %s, line: %d", MESSAGE, __FILENAME__, __LINE__);}
 #define QUIK_LOG_TM(TAG, MESSAGE) {Debug::LogNow("[%s]: %s file: %s, line: %d", TAG, MESSAGE, __FILENAME__, __LINE__);}
 
-#define RETURN_AND_LOG(bResult) { QUIK_LOG(); return bResult;}
-#define RETURN_AND_LOG_ERR(bResult, hResult) { if(!bResult){ QUIK_LOG_M(Debug::GetErrorDesc(hResult, true).c_str()); } else QUIK_LOG(); return bResult;}
+#define RETURN_AND_LOG(result) { QUIK_LOG(); return result;}
+#define RETURN_AND_LOG_ERR(result, hResult) { if(!result){ QUIK_LOG_M(Debug::GetErrorDesc(hResult, true).c_str()); } else QUIK_LOG(); return result;}
 
 #define ON_FAIL_LOG_AND_RETURN(expr) { HRESULT hResult = expr; if(FAILED(hResult)) RETURN_AND_LOG_ERR(false, hResult); }
 

@@ -29,7 +29,7 @@ void Model::Render(ID3D11DeviceContext* pDeviceContext)
 
 void Model::Shutdown()
 {
-	SHUTDOWND_DELETE(m_pTexture);
+	SHUTDOWN_DELETE(m_pTexture);
 
 	RELEASE_AND_NULL(m_pVertexBuffer);
 	RELEASE_AND_NULL(m_pIndexBuffer);

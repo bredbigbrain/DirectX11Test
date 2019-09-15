@@ -57,10 +57,10 @@ bool CUserInterface::Initialize(D3D* pDirect3D, int nScreenHeight, int nScreenWi
 
 void CUserInterface::Shutdown()
 {
-	SHUTDOWND_DELETE(m_pPositionString);
-	SHUTDOWND_DELETE(m_pVideoString);
-	SHUTDOWND_DELETE(m_pFpsString);
-	SHUTDOWND_DELETE(m_pFont);
+	SHUTDOWN_DELETE(m_pPositionString);
+	SHUTDOWN_DELETE(m_pVideoString);
+	SHUTDOWN_DELETE(m_pFpsString);
+	SHUTDOWN_DELETE(m_pFont);
 }
 
 bool CUserInterface::Frame(ID3D11DeviceContext * pDeviceContext, int nFPS, XMFLOAT3 position, XMFLOAT3 rotation)

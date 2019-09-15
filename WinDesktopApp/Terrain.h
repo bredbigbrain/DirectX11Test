@@ -11,7 +11,21 @@ private:
 	struct SVertex
 	{
 		XMFLOAT3 position;
-		XMFLOAT4 color;
+		XMFLOAT2 texCoord;
+		XMFLOAT3 normal;
+	};
+
+	struct SModel
+	{
+		float x = 0, y = 0, z = 0;
+		float tu = 0, tv = 0;
+		float nx = 0, ny = 0, nz = 0;
+	};
+
+	struct SHeightMap
+	{
+		float x = 0, y = 0, z = 0;
+		float nx = 0, ny = 0, nz = 0;
 	};
 
 public:
@@ -29,6 +43,7 @@ private:
 	bool LoadBitmapHeightMap();
 	void SetTerrainCoordinates();
 	bool BuildTerrainModel();
+	bool CalculateNormals();
 
 private:
 	ID3D11Buffer* m_pVertexBuffer{nullptr};
@@ -40,7 +55,7 @@ private:
 	int m_nTerrainWidth{0};
 	float m_fHeightScale{1};
 	char* m_lpszTerrainFileName{nullptr};
-	XMFLOAT3* m_arrHeightMap{nullptr};
-	XMFLOAT3* m_arrTerrainModel{nullptr};
+	SHeightMap* m_arrHeightMap{nullptr};
+	SModel* m_arrTerrainModel{nullptr};
 };
 

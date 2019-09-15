@@ -14,6 +14,9 @@ bool CTerrain::Initialize(ID3D11Device* pDevice, const char* lpszSetupFilePath)
 
 	SetTerrainCoordinates();
 
+	if(!CalculateNormals())
+		RETURN_AND_LOG(false);
+
 	if(!BuildTerrainModel())
 		RETURN_AND_LOG(false);
 
@@ -61,8 +64,9 @@ bool CTerrain::InitializeBuffers(ID3D11Device* pDevice)
 
 	for(size_t i = 0; i < m_nVertexCount; i++)
 	{
-		arrVerticies[i].position = m_arrTerrainModel[i];
-		arrVerticies[i].color = color;
+		arrVerticies[i].position = XMFLOAT3(m_arrTerrainModel[i].x, m_arrTerrainModel[i].y, m_arrTerrainModel[i].z);
+		arrVerticies[i].texCoord = XMFLOAT2(m_arrTerrainModel[i].tu, m_arrTerrainModel[i].tv);
+		arrVerticies[i].normal = XMFLOAT3(m_arrTerrainModel[i].nx, m_arrTerrainModel[i].ny, m_arrTerrainModel[i].nz);
 		arrIndicies[i] = i;
 	}
 
@@ -159,7 +163,7 @@ bool CTerrain::LoadSetupFile(const char * lpszFilePath)
 
 bool CTerrain::LoadBitmapHeightMap()
 {
-	m_arrHeightMap = new XMFLOAT3[m_nTerrainWidth * m_nTerrainHeight];
+	m_arrHeightMap = new SHeightMap[m_nTerrainWidth * m_nTerrainHeight];
 
 	FILE* pFile;
 	if(fopen_s(&pFile, m_lpszTerrainFileName, "rb") != 0)
@@ -226,7 +230,7 @@ void CTerrain::SetTerrainCoordinates()
 bool CTerrain::BuildTerrainModel()
 {
 	m_nVertexCount = (m_nTerrainHeight - 1) * (m_nTerrainWidth - 1) * 6;
-	m_arrTerrainModel = new XMFLOAT3[m_nVertexCount];
+	m_arrTerrainModel = new SModel[m_nVertexCount];
 
 	size_t nIndex = 0, nIndex1 = 0, nIndex2 = 0, nIndex3 = 0, nIndex4 = 0;
 	for(size_t j = 0; j < m_nTerrainHeight - 1; ++j)
@@ -242,39 +246,194 @@ bool CTerrain::BuildTerrainModel()
 			m_arrTerrainModel[nIndex].x = m_arrHeightMap[nIndex1].x;
 			m_arrTerrainModel[nIndex].y = m_arrHeightMap[nIndex1].y;
 			m_arrTerrainModel[nIndex].z = m_arrHeightMap[nIndex1].z;
+			m_arrTerrainModel[nIndex].tu = 0.f;
+			m_arrTerrainModel[nIndex].tv = 0.f;
+			m_arrTerrainModel[nIndex].nx = m_arrHeightMap[nIndex1].nx;
+			m_arrTerrainModel[nIndex].ny = m_arrHeightMap[nIndex1].ny;
+			m_arrTerrainModel[nIndex].nz = m_arrHeightMap[nIndex1].nz;
 			++nIndex;
 
 			// Triangle 1 - Upper right.
 			m_arrTerrainModel[nIndex].x = m_arrHeightMap[nIndex2].x;
 			m_arrTerrainModel[nIndex].y = m_arrHeightMap[nIndex2].y;
 			m_arrTerrainModel[nIndex].z = m_arrHeightMap[nIndex2].z;
+			m_arrTerrainModel[nIndex].tu = 1.f;
+			m_arrTerrainModel[nIndex].tv = 0.f;
+			m_arrTerrainModel[nIndex].nx = m_arrHeightMap[nIndex2].nx;
+			m_arrTerrainModel[nIndex].ny = m_arrHeightMap[nIndex2].ny;
+			m_arrTerrainModel[nIndex].nz = m_arrHeightMap[nIndex2].nz;
 			++nIndex;
 
 			// Triangle 1 - Bottom left.
 			m_arrTerrainModel[nIndex].x = m_arrHeightMap[nIndex3].x;
 			m_arrTerrainModel[nIndex].y = m_arrHeightMap[nIndex3].y;
 			m_arrTerrainModel[nIndex].z = m_arrHeightMap[nIndex3].z;
+			m_arrTerrainModel[nIndex].tu = 0.f;
+			m_arrTerrainModel[nIndex].tv = 1.f;
+			m_arrTerrainModel[nIndex].nx = m_arrHeightMap[nIndex3].nx;
+			m_arrTerrainModel[nIndex].ny = m_arrHeightMap[nIndex3].ny;
+			m_arrTerrainModel[nIndex].nz = m_arrHeightMap[nIndex3].nz;
 			++nIndex;
 
 			// Triangle 2 - Bottom left.
 			m_arrTerrainModel[nIndex].x = m_arrHeightMap[nIndex3].x;
 			m_arrTerrainModel[nIndex].y = m_arrHeightMap[nIndex3].y;
 			m_arrTerrainModel[nIndex].z = m_arrHeightMap[nIndex3].z;
+			m_arrTerrainModel[nIndex].tu = 0.f;
+			m_arrTerrainModel[nIndex].tv = 1.f;
+			m_arrTerrainModel[nIndex].nx = m_arrHeightMap[nIndex3].nx;
+			m_arrTerrainModel[nIndex].ny = m_arrHeightMap[nIndex3].ny;
+			m_arrTerrainModel[nIndex].nz = m_arrHeightMap[nIndex3].nz;
 			++nIndex;
 
 			// Triangle 2 - Upper right.
 			m_arrTerrainModel[nIndex].x = m_arrHeightMap[nIndex2].x;
 			m_arrTerrainModel[nIndex].y = m_arrHeightMap[nIndex2].y;
 			m_arrTerrainModel[nIndex].z = m_arrHeightMap[nIndex2].z;
+			m_arrTerrainModel[nIndex].tu = 1.f;
+			m_arrTerrainModel[nIndex].tv = 0.f;
+			m_arrTerrainModel[nIndex].nx = m_arrHeightMap[nIndex2].nx;
+			m_arrTerrainModel[nIndex].ny = m_arrHeightMap[nIndex2].ny;
+			m_arrTerrainModel[nIndex].nz = m_arrHeightMap[nIndex2].nz;
 			++nIndex;
 
 			// Triangle 2 - Bottom right.
 			m_arrTerrainModel[nIndex].x = m_arrHeightMap[nIndex4].x;
 			m_arrTerrainModel[nIndex].y = m_arrHeightMap[nIndex4].y;
 			m_arrTerrainModel[nIndex].z = m_arrHeightMap[nIndex4].z;
+			m_arrTerrainModel[nIndex].tu = 1.f;
+			m_arrTerrainModel[nIndex].tv = 1.f;
+			m_arrTerrainModel[nIndex].nx = m_arrHeightMap[nIndex4].nx;
+			m_arrTerrainModel[nIndex].ny = m_arrHeightMap[nIndex4].ny;
+			m_arrTerrainModel[nIndex].nz = m_arrHeightMap[nIndex4].nz;
 			++nIndex;
 		}
 	}
+
+	return true;
+}
+
+bool CTerrain::CalculateNormals()
+{
+	int i, j, index1, index2, index3, index;
+	float vertex1[3], vertex2[3], vertex3[3], vector1[3], vector2[3], sum[3], length;
+	// Create a temporary array to hold the face normal vectors.
+	XMFLOAT3* normals = new XMFLOAT3[(m_nTerrainHeight - 1) * (m_nTerrainWidth - 1)];
+
+	// Go through all the faces in the mesh and calculate their normals.
+	for(j = 0; j < (m_nTerrainHeight - 1); j++)
+	{
+		for(i = 0; i < (m_nTerrainWidth - 1); i++)
+		{
+			index1 = ((j + 1) * m_nTerrainWidth) + i;      // Bottom left vertex.
+			index2 = ((j + 1) * m_nTerrainWidth) + (i + 1);  // Bottom right vertex.
+			index3 = (j * m_nTerrainWidth) + i;          // Upper left vertex.
+
+			// Get three vertices from the face.
+			vertex1[0] = m_arrHeightMap[index1].x;
+			vertex1[1] = m_arrHeightMap[index1].y;
+			vertex1[2] = m_arrHeightMap[index1].z;
+
+			vertex2[0] = m_arrHeightMap[index2].x;
+			vertex2[1] = m_arrHeightMap[index2].y;
+			vertex2[2] = m_arrHeightMap[index2].z;
+
+			vertex3[0] = m_arrHeightMap[index3].x;
+			vertex3[1] = m_arrHeightMap[index3].y;
+			vertex3[2] = m_arrHeightMap[index3].z;
+
+			// Calculate the two vectors for this face.
+			vector1[0] = vertex1[0] - vertex3[0];
+			vector1[1] = vertex1[1] - vertex3[1];
+			vector1[2] = vertex1[2] - vertex3[2];
+			vector2[0] = vertex3[0] - vertex2[0];
+			vector2[1] = vertex3[1] - vertex2[1];
+			vector2[2] = vertex3[2] - vertex2[2];
+
+			index = (j * (m_nTerrainWidth - 1)) + i;
+
+			// Calculate the cross product of those two vectors to get the un-normalized value for this face normal.
+			normals[index].x = (vector1[1] * vector2[2]) - (vector1[2] * vector2[1]);
+			normals[index].y = (vector1[2] * vector2[0]) - (vector1[0] * vector2[2]);
+			normals[index].z = (vector1[0] * vector2[1]) - (vector1[1] * vector2[0]);
+
+			// Calculate the length.
+			length = (float)sqrt((normals[index].x * normals[index].x) + (normals[index].y * normals[index].y) +
+				(normals[index].z * normals[index].z));
+
+			// Normalize the final value for this face using the length.
+			normals[index].x = (normals[index].x / length);
+			normals[index].y = (normals[index].y / length);
+			normals[index].z = (normals[index].z / length);
+		}
+	}
+
+	// Now go through all the vertices and take a sum of the face normals that touch this vertex.
+	for(j = 0; j < m_nTerrainHeight; j++)
+	{
+		for(i = 0; i < m_nTerrainWidth; i++)
+		{
+			// Initialize the sum.
+			sum[0] = 0.0f;
+			sum[1] = 0.0f;
+			sum[2] = 0.0f;
+
+			// Bottom left face.
+			if(((i - 1) >= 0) && ((j - 1) >= 0))
+			{
+				index = ((j - 1) * (m_nTerrainWidth - 1)) + (i - 1);
+
+				sum[0] += normals[index].x;
+				sum[1] += normals[index].y;
+				sum[2] += normals[index].z;
+			}
+
+			// Bottom right face.
+			if((i < (m_nTerrainWidth - 1)) && ((j - 1) >= 0))
+			{
+				index = ((j - 1) * (m_nTerrainHeight - 1)) + i;
+
+				sum[0] += normals[index].x;
+				sum[1] += normals[index].y;
+				sum[2] += normals[index].z;
+			}
+
+			// Upper left face.
+			if(((i - 1) >= 0) && (j < (m_nTerrainHeight - 1)))
+			{
+				index = (j * (m_nTerrainWidth - 1)) + (i - 1);
+
+				sum[0] += normals[index].x;
+				sum[1] += normals[index].y;
+				sum[2] += normals[index].z;
+			}
+
+			// Upper right face.
+			if((i < (m_nTerrainWidth - 1)) && (j < (m_nTerrainHeight - 1)))
+			{
+				index = (j * (m_nTerrainWidth - 1)) + i;
+
+				sum[0] += normals[index].x;
+				sum[1] += normals[index].y;
+				sum[2] += normals[index].z;
+			}
+
+			// Calculate the length of this normal.
+			length = (float)sqrt((sum[0] * sum[0]) + (sum[1] * sum[1]) + (sum[2] * sum[2]));
+
+			// Get an index to the vertex location in the height map array.
+			index = (j * m_nTerrainWidth) + i;
+
+			// Normalize the final shared normal for this vertex and store it in the height map array.
+			m_arrHeightMap[index].nx = (sum[0] / length);
+			m_arrHeightMap[index].ny = (sum[1] / length);
+			m_arrHeightMap[index].nz = (sum[2] / length);
+		}
+	}
+
+	// Release the temporary normals.
+	delete[] normals;
+	normals = 0;
 
 	return true;
 }

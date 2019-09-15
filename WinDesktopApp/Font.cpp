@@ -29,7 +29,7 @@ bool CFont::Initialize(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceCont
 
 void CFont::Shutdown()
 {
-	SHUTDOWND_DELETE(m_pTexture);
+	SHUTDOWN_DELETE(m_pTexture);
 
 	DELETE_ARR(m_pFont);
 }

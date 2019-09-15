@@ -154,7 +154,7 @@ namespace Debug
 //////////////////////////////////////////////////////////////////////////////
 ///////  CLogMessage
 
-	static const int nTimeLength = 8 + 2;	//"hh:mm:ss: "
+	static const int nTimeLength = 10;	//"hh:mm:ss: "
 
 	CLogMessage::CLogMessage(const CLogMessage& rh) : CLogMessage(rh.GetStr() + nTimeLength, rh.m_nLogLevel, rh.GetSize() - 1 - nTimeLength)
 	{

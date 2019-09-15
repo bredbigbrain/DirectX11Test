@@ -1,4 +1,4 @@
-#include "CZone.h"
+#include "Zone.h"
 #include "Debug.h"
 #include "Defines.h"
 #include "Globals.h"
@@ -31,6 +31,10 @@ bool CZone::Initialize(D3D* pDirect3D, HWND hWnd, int nScreenWidht, int nScreenH
 	m_pPosition->SetPosition(128.f, 5.f, -10.f);
 	m_pPosition->SetRotation(0.f, 0.f, 0.f);
 
+	m_pLightSource = new CLightSource();
+	m_pLightSource->SetDiffuseColor(1.f, 1.f, 1.f, 1.f);
+	m_pLightSource->SetDirection(-0.5f, -1.f, -0.5f);
+
 	m_pTerrain = new CTerrain();
 
 	if(!m_pTerrain->Initialize(pDirect3D->GetDevice(), Settings::TERRAIN_DATA_FILE_PATH))
@@ -45,17 +49,18 @@ bool CZone::Initialize(D3D* pDirect3D, HWND hWnd, int nScreenWidht, int nScreenH
 
 void CZone::Shutdown()
 {
-	SHUTDOWND_DELETE(m_pTerrain);
+	SHUTDOWN_DELETE(m_pTerrain);
 	DELETE(m_pPosition);
 	DELETE(m_pCamera);
-	SHUTDOWND_DELETE(m_pUserInterface);
+	DELETE(m_pLightSource);
+	SHUTDOWN_DELETE(m_pUserInterface);
 }
 
-bool CZone::Frame(D3D* pDirect3D, CInput* pInput, CShaderManager* pShManager, float fDT, int nFPS)
+bool CZone::Frame(D3D* pDirect3D, CInput* pInput, CShaderManager* pShManager, CTextureManager* pTexManager, float fDT, int nFPS)
 {
 	HandeMovementInput(pInput, fDT);
 
-	if(!Render(pDirect3D, pShManager))
+	if(!Render(pDirect3D, pShManager, pTexManager))
 		RETURN_AND_LOG(false);
 	if(!m_pUserInterface->Frame(pDirect3D->GetDeviceContext(), nFPS, m_pPosition->GetPosition(), m_pPosition->GetRotation()))
 		RETURN_AND_LOG(false);
@@ -94,11 +99,11 @@ void CZone::HandeMovementInput(CInput* pInput, float fDT)
 }
 
 
-bool CZone::Render(D3D* pDirect3D, CShaderManager* pShManager)
+bool CZone::Render(D3D* pDirect3D, CShaderManager* pShManager, CTextureManager* pTexManager)
 {
 	m_pCamera->Render();
 
-	XMMATRIX matrWorld, matrProjection, matrOrtho;
+	XMMATRIX matrWorld, matrProjection, matrView;
 	pDirect3D->GetWorldMatrix(matrWorld);
 	pDirect3D->GetProjectionMatrix(matrProjection);
 
@@ -109,8 +114,9 @@ bool CZone::Render(D3D* pDirect3D, CShaderManager* pShManager)
 
 	m_pTerrain->Render(pDirect3D->GetDeviceContext());
 
-	bool bResult = pShManager->RenderColorShader(pDirect3D->GetDeviceContext(), m_pTerrain->GetIndexCount()
-		, matrWorld, m_pCamera->GetViewMatrix(), matrProjection);
+	matrView = m_pCamera->GetViewMatrix();
+	bool bResult = pShManager->RenderLightShader(pDirect3D->GetDeviceContext(), m_pTerrain->GetIndexCount()
+		, matrWorld, matrView, matrProjection, pTexManager->GetTexture(1), m_pLightSource->GetDirection(), m_pLightSource->GetDiffuseColor());
 
 	if(!bResult)
 		RETURN_AND_LOG(false);

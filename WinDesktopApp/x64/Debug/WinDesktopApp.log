@@ -1,9 +1,2 @@
-﻿  Terrain.cpp
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\defines.h(5): warning C4005: 'DELETE': macro redefinition
-  c:\program files (x86)\windows kits\10\include\10.0.17763.0\um\winnt.h(8894): note: see previous definition of 'DELETE'
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\terrain.cpp(66): warning C4267: '=': conversion from 'size_t' to 'unsigned long', possible loss of data
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\terrain.cpp(71): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\terrain.cpp(86): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\terrain.cpp(151): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\terrain.cpp(218): warning C4244: '=': conversion from 'size_t' to 'float', possible loss of data
+﻿  Position.cpp
   WinDesktopApp.vcxproj -> D:\YandexDisk\Документы\Stuff\C++ WinDeskApp\x64\Debug\WinDesktopApp.exe

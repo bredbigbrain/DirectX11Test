@@ -59,23 +59,7 @@ bool CTextureShader::InitializeShader(ID3D11Device* pDevice, HWND hwnd, const WC
 
 	pVertexShaderBuffer->Release();
 
-	D3D11_SAMPLER_DESC samplerDesc;
-
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.MipLODBias = 0.f;
-	samplerDesc.MaxAnisotropy = 1;
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	samplerDesc.BorderColor[0] = 0;
-	samplerDesc.BorderColor[1] = 0;
-	samplerDesc.BorderColor[2] = 0;
-	samplerDesc.BorderColor[3] = 0;
-	samplerDesc.MinLOD = 0;
-	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
-	ON_FAIL_LOG_AND_RETURN(pDevice->CreateSamplerState(&samplerDesc, &m_pSampleState));
+	CreateSamplerState(pDevice);
 
 	return InitializeMatrixBuffer(pDevice);
 }
@@ -108,4 +92,27 @@ void CTextureShader::RenderShader(ID3D11DeviceContext* pDeviceContext, int nInde
 	pDeviceContext->PSGetSamplers(0, 1, &m_pSampleState);
 
 	pDeviceContext->DrawIndexed(nIndexCount, 0, 0);
+}
+
+bool CTextureShader::CreateSamplerState(ID3D11Device* pDevice)
+{
+	D3D11_SAMPLER_DESC samplerDesc;
+
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MipLODBias = 0.f;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.BorderColor[0] = 0;
+	samplerDesc.BorderColor[1] = 0;
+	samplerDesc.BorderColor[2] = 0;
+	samplerDesc.BorderColor[3] = 0;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	ON_FAIL_LOG_AND_RETURN(pDevice->CreateSamplerState(&samplerDesc, &m_pSampleState));
+
+	return true;
 }

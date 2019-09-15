@@ -31,32 +31,46 @@ bool System::Initialize()
 	if(!m_pDirect3D->Initialize(nScreenWidth, nScreenHeight, Settings::g_graphics.bVSync, m_hwnd
 		, Settings::g_graphics.bFullScreen, Settings::g_graphics.fScreenDepth, Settings::g_graphics.fScreenNear))
 	{
-		QUIK_LOG_TM("ERROR", "Graphics::Initialize: Could not initialize Direct3D!");
+		QUIK_LOG_TM("ERROR", "System::Initialize: Could not initialize Direct3D!");
 		return false;
 	}
 
 	m_pZone = new CZone();
 	if(!m_pZone->Initialize(m_pDirect3D, m_hwnd, nScreenWidth, nScreenHeight, Settings::g_graphics.fScreenDepth))
 	{
-		QUIK_LOG_TM("ERROR", "Graphics::Initialize: Could not initialize Zone!");
+		QUIK_LOG_TM("ERROR", "System::Initialize: Could not initialize Zone!");
 		return false;
 	}
 
 	m_pShManager = new CShaderManager();
 	if(!m_pShManager->Initialize(m_pDirect3D->GetDevice(), m_hwnd))
 	{
-		QUIK_LOG_TM("ERROR", "Graphics::Initialize: Could not initialize ShaderManager!");
+		QUIK_LOG_TM("ERROR", "System::Initialize: Could not initialize ShaderManager!");
 		return false;
 	}
+
+	m_pTexManager = new CTextureManager();
+	if(!m_pTexManager->Initialize(10))
+	{
+		QUIK_LOG_TM("ERROR", "System::Initialize: Could not initialize TextureManager!");
+		return false;
+	}
+
+	if(!m_pTexManager->LoadTexture(m_pDirect3D->GetDevice(), m_pDirect3D->GetDeviceContext(), "Res/test.tga", 0))
+		RETURN_AND_LOG(false);
+
+	if(!m_pTexManager->LoadTexture(m_pDirect3D->GetDevice(), m_pDirect3D->GetDeviceContext(), "Res/dirt01d.tga", 1))
+		RETURN_AND_LOG(false);
 
 	return true;
 }
 
 void System::Shutdown()
 {
-	SHUTDOWND_DELETE(m_pZone);
-	SHUTDOWND_DELETE(m_pShManager);
-	SHUTDOWND_DELETE(m_pDirect3D);
+	SHUTDOWN_DELETE(m_pZone);
+	SHUTDOWN_DELETE(m_pShManager);
+	SHUTDOWN_DELETE(m_pTexManager);
+	SHUTDOWN_DELETE(m_pDirect3D);
 	DELETE(m_pInput);
 
 	ShutdownWindows();	
@@ -93,10 +107,9 @@ bool System::Frame()
 	if (m_pInput->IsKeyDown(VK_ESCAPE))
 		return false;
 
-	if (!m_pZone->Frame(m_pDirect3D, m_pInput, m_pShManager, Time::GetDtMS(), 1 / Time::GetDtS()))
+	if (!m_pZone->Frame(m_pDirect3D, m_pInput, m_pShManager, m_pTexManager, Time::GetDtMS(), 1 / Time::GetDtS()))
 		RETURN_AND_LOG(false);
 
-	m_pInput->OnEndOfFrame();
 	m_pInput->OnEndOfFrame();
 	Debug::OnEndOfFrame();
 	Time::OnFrameEnd();
