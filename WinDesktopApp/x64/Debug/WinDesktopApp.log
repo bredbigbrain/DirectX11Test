@@ -1,2 +1,5 @@
-﻿  Position.cpp
+﻿  Zone.cpp
+d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\defines.h(5): warning C4005: 'DELETE': macro redefinition
+  c:\program files (x86)\windows kits\10\include\10.0.17763.0\um\winnt.h(8894): note: see previous definition of 'DELETE'
+d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\zone.cpp(119): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   WinDesktopApp.vcxproj -> D:\YandexDisk\Документы\Stuff\C++ WinDeskApp\x64\Debug\WinDesktopApp.exe

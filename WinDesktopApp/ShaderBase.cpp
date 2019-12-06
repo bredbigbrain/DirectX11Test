@@ -56,7 +56,7 @@ void ShaderBase::OutputShaderErrMsg(ID3D10Blob* pErrorMessage, HWND hwnd, const 
 	unsigned long long bufferSize = pErrorMessage->GetBufferSize();
 
 	std::ofstream fout;
-	fout.open("shader-error.txt");
+	fout.open(Settings::SHADER_ERROR_FILE_PATH);
 
 	for (unsigned long long i = 0; i < bufferSize; i++)
 	{

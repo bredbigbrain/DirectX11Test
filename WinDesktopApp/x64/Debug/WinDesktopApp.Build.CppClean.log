@@ -1,6 +1,5 @@
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\vc141.pdb
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\vc141.idb
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\position.obj
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\model.obj
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\main.obj
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\input.obj
@@ -13,6 +12,7 @@ d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\zo
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\userinterface.obj
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\texturemanager.obj
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\text.obj
+d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\terrainshader.obj
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\terrain.obj
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\lightsource.obj
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\lightshader.obj
@@ -28,15 +28,14 @@ d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\st
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\shadermanager.obj
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\shaderbase.obj
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\settings.obj
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\windesktopapp.res
+d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\position.obj
+d:\yandexdisk\документы\stuff\c++ windeskapp\x64\debug\windesktopapp.exe
+d:\yandexdisk\документы\stuff\c++ windeskapp\x64\debug\windesktopapp.ilk
 d:\yandexdisk\документы\stuff\c++ windeskapp\x64\debug\windesktopapp.pdb
+d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\windesktopapp.res
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\windesktopapp.tlog\cl.command.1.tlog
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\windesktopapp.tlog\cl.read.1.tlog
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\windesktopapp.tlog\cl.write.1.tlog
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\windesktopapp.tlog\link-cvtres.read.1.tlog
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\windesktopapp.tlog\link-cvtres.write.1.tlog
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\windesktopapp.tlog\link-rc.read.1.tlog
-d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\windesktopapp.tlog\link-rc.write.1.tlog
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\windesktopapp.tlog\link.command.1.tlog
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\windesktopapp.tlog\link.read.1.tlog
 d:\yandexdisk\документы\stuff\c++ windeskapp\windesktopapp\x64\debug\windesktopapp.tlog\link.write.1.tlog

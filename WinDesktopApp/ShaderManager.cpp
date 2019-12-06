@@ -20,6 +20,10 @@ bool CShaderManager::Initialize(ID3D11Device * pDevice, HWND hwnd)
 	if(!m_pLightShader->Initialize(pDevice, hwnd))
 		RETURN_AND_LOG(false);
 
+	m_pTerrainShader = new CTerrainShader();
+	if(!m_pTerrainShader->Initialize(pDevice, hwnd))
+		RETURN_AND_LOG(false);
+
 	return true;
 }
 
@@ -29,6 +33,7 @@ void CShaderManager::Shutdown()
 	SHUTDOWN_DELETE(m_pFontShader);
 	SHUTDOWN_DELETE(m_pTextureShader);
 	SHUTDOWN_DELETE(m_pLightShader);
+	SHUTDOWN_DELETE(m_pTerrainShader);
 }
 
 bool CShaderManager::RenderColorShader(ID3D11DeviceContext * pDeviceContext, int nIndexCount, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection)
@@ -52,4 +57,10 @@ bool CShaderManager::RenderLightShader(ID3D11DeviceContext* pDeviceContext, int 
 	, ID3D11ShaderResourceView* pTextureSRV, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor)
 {
 	return m_pLightShader->Render(pDeviceContext, nIndexCount, matrWorld, matrView, matrProjection, pTextureSRV, lightDirection, diffuseColor);
+}
+
+bool CShaderManager::RenderTerrainShader(ID3D11DeviceContext* pDeviceContext, int nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
+	, ID3D11ShaderResourceView* pTextureSRV, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor)
+{
+	return m_pTerrainShader->Render(pDeviceContext, nIndexCount, matrWorld, matrView, matrProjection, pTextureSRV, lightDirection, diffuseColor);
 }

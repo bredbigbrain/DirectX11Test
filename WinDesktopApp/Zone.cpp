@@ -115,7 +115,7 @@ bool CZone::Render(D3D* pDirect3D, CShaderManager* pShManager, CTextureManager* 
 	m_pTerrain->Render(pDirect3D->GetDeviceContext());
 
 	matrView = m_pCamera->GetViewMatrix();
-	bool bResult = pShManager->RenderLightShader(pDirect3D->GetDeviceContext(), m_pTerrain->GetIndexCount()
+	bool bResult = pShManager->RenderTerrainShader(pDirect3D->GetDeviceContext(), m_pTerrain->GetIndexCount()
 		, matrWorld, matrView, matrProjection, pTexManager->GetTexture(1), m_pLightSource->GetDirection(), m_pLightSource->GetDiffuseColor());
 
 	if(!bResult)

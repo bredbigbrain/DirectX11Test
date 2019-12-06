@@ -20,7 +20,7 @@ bool System::Initialize()
 
 	InitializeWindows(nScreenWidth, nScreenHeight);
 
-	settings.Initialize();
+	//settings.Initialize();
 	Time::Initialize();
 
 	m_pInput = new CInput();

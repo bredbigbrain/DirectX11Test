@@ -42,8 +42,9 @@ namespace Math3DNS
 
 namespace Settings
 {
-	const char* SETTINGS_FILE_PATH{ "Settings.bytes" };
-	extern const char* TERRAIN_DATA_FILE_PATH{"TerrainData.txt"};
+	const char* SETTINGS_FILE_PATH{ "Info/Settings.bytes" };
+	const char* TERRAIN_DATA_FILE_PATH{"Info/TerrainData.txt"};
+	const char* SHADER_ERROR_FILE_PATH{"Info/Shader-error.txt"};
 	const unsigned int VERSION{0};
 
 	SGraphics_v1 g_graphics;
@@ -52,7 +53,7 @@ namespace Settings
 
 namespace Debug
 {
-	const char* LOG_FILE_PATH{ "Log.txt" };
+	const char* LOG_FILE_PATH{ "Info/Log.txt" };
 }
 
 namespace Input

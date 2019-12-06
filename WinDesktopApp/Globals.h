@@ -44,6 +44,7 @@ namespace Settings
 {
 	extern const char* SETTINGS_FILE_PATH;
 	extern const char* TERRAIN_DATA_FILE_PATH;
+	extern const char* SHADER_ERROR_FILE_PATH;
 	extern const unsigned int VERSION;
 
 	struct SGraphics_v1

@@ -3,7 +3,7 @@
 #include <math.h>
 
 float m_fMaxMoveSpeed = 2.5f;
-float m_fMaxTurnSpeed = 0.25f;
+float m_fMaxTurnSpeed = 0.15f;
 
 void CPosition::SetPosition(float fX, float fY, float fZ)
 {
@@ -142,8 +142,8 @@ void CPosition::MoveUpward(bool bKeyDown)
 	if(bKeyDown)
 	{
 		m_fUpwardSpeed += m_fFrameTime * 1.f;
-		if(m_fUpwardSpeed > m_fMaxMoveSpeed / 15.f)
-			m_fUpwardSpeed = m_fMaxMoveSpeed / 15.f;
+		if(m_fUpwardSpeed > m_fMaxMoveSpeed / 30.f)
+			m_fUpwardSpeed = m_fMaxMoveSpeed / 30.f;
 	}
 	else
 	{
@@ -160,8 +160,8 @@ void CPosition::MoveDownward(bool bKeyDown)
 	if(bKeyDown)
 	{
 		m_fDownwardSpeed += m_fFrameTime * 1.f;
-		if(m_fDownwardSpeed > m_fMaxMoveSpeed / 15.f)
-			m_fDownwardSpeed = m_fMaxMoveSpeed / 15.f;
+		if(m_fDownwardSpeed > m_fMaxMoveSpeed / 30.f)
+			m_fDownwardSpeed = m_fMaxMoveSpeed / 30.f;
 	}
 	else
 	{

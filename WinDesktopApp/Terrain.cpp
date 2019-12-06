@@ -17,6 +17,9 @@ bool CTerrain::Initialize(ID3D11Device* pDevice, const char* lpszSetupFilePath)
 	if(!CalculateNormals())
 		RETURN_AND_LOG(false);
 
+	if(!LoadColorMap())
+		RETURN_AND_LOG(false);
+
 	if(!BuildTerrainModel())
 		RETURN_AND_LOG(false);
 
@@ -36,6 +39,7 @@ void CTerrain::Shutdown()
 	DELETE_ARR(m_arrTerrainModel);
 	DELETE_ARR(m_arrHeightMap);
 	DELETE_ARR(m_lpszTerrainFileName);
+	DELETE_ARR(m_lpszColorMapFileName);
 }
 
 bool CTerrain::Render(ID3D11DeviceContext* pDeviceContext)
@@ -67,6 +71,7 @@ bool CTerrain::InitializeBuffers(ID3D11Device* pDevice)
 		arrVerticies[i].position = XMFLOAT3(m_arrTerrainModel[i].x, m_arrTerrainModel[i].y, m_arrTerrainModel[i].z);
 		arrVerticies[i].texCoord = XMFLOAT2(m_arrTerrainModel[i].tu, m_arrTerrainModel[i].tv);
 		arrVerticies[i].normal = XMFLOAT3(m_arrTerrainModel[i].nx, m_arrTerrainModel[i].ny, m_arrTerrainModel[i].nz);
+		arrVerticies[i].color = XMFLOAT3(m_arrTerrainModel[i].r, m_arrTerrainModel[i].g, m_arrTerrainModel[i].b);
 		arrIndicies[i] = i;
 	}
 
@@ -120,6 +125,7 @@ void CTerrain::RenderBuffers(ID3D11DeviceContext* pDeviceContext)
 bool CTerrain::LoadSetupFile(const char * lpszFilePath)
 {
 	m_lpszTerrainFileName = new char[MAX_PATH];
+	m_lpszColorMapFileName = new char[MAX_PATH];
 
 	std::ifstream fin;
 	fin.open(lpszFilePath);
@@ -135,6 +141,12 @@ bool CTerrain::LoadSetupFile(const char * lpszFilePath)
 		{
 			const size_t nSubStrLength = sizeof("Terrain Filename:");
 			strncpy_s(m_lpszTerrainFileName, MAX_PATH, szSubStr + nSubStrLength, strnlen_s(szSubStr + nSubStrLength, sizeof(szLine) - nSubStrLength));
+			++nCounter;
+		}
+		if(char* szSubStr = strstr(szLine, "Color Map Filename:"))
+		{
+			const size_t nSubStrLength = sizeof("Color Map Filename:");
+			strncpy_s(m_lpszColorMapFileName, MAX_PATH, szSubStr + nSubStrLength, strnlen_s(szSubStr + nSubStrLength, sizeof(szLine) - nSubStrLength));
 			++nCounter;
 		}
 		else if(char* szSubStr = strstr(szLine, "Terrain Height:"))
@@ -158,7 +170,7 @@ bool CTerrain::LoadSetupFile(const char * lpszFilePath)
 		fin.getline(szLine, sizeof(szLine));
 	}
 
-	return nCounter == 4;
+	return nCounter == 5;
 }
 
 bool CTerrain::LoadBitmapHeightMap()
@@ -211,6 +223,56 @@ bool CTerrain::LoadBitmapHeightMap()
 	return true;
 }
 
+bool CTerrain::LoadColorMap()
+{
+	FILE* pFile;
+	if(fopen_s(&pFile, m_lpszColorMapFileName, "rb") != 0)
+		RETURN_AND_LOG(false);
+
+	BITMAPFILEHEADER bmpHeader;
+	if(fread(&bmpHeader, sizeof(BITMAPFILEHEADER), 1, pFile) != 1)
+		RETURN_AND_LOG(false);
+
+	BITMAPINFOHEADER bmpInfo;
+	if(fread(&bmpInfo, sizeof(BITMAPINFOHEADER), 1, pFile) != 1)
+		RETURN_AND_LOG(false);
+
+	if(bmpInfo.biHeight != m_nTerrainHeight || bmpInfo.biWidth != m_nTerrainWidth)
+	{
+		QUIK_LOG_M("Wrong .bmp image dimentions!");
+		return false;
+	}
+
+	size_t nImageSize = m_nTerrainHeight * (m_nTerrainWidth * 3 + 1);
+	auto arrBitMap = new unsigned char[nImageSize];
+
+	fseek(pFile, bmpHeader.bfOffBits, SEEK_SET);
+
+	if(fread(arrBitMap, nImageSize, 1, pFile) != 1)
+		RETURN_AND_LOG(false);
+
+	if(fclose(pFile) != 0)
+		RETURN_AND_LOG(false);
+
+	size_t k = 0, nIndex = 0;
+	for(size_t j = 0; j < m_nTerrainHeight; j++)
+	{
+		for(size_t i = 0; i < m_nTerrainWidth; i++)
+		{
+			nIndex = m_nTerrainWidth * (m_nTerrainHeight - 1 - j) + i;
+			m_arrHeightMap[nIndex].b = static_cast<float>(arrBitMap[k]) / 255.f;
+			m_arrHeightMap[nIndex].g = static_cast<float>(arrBitMap[k + 1]) / 255.f;
+			m_arrHeightMap[nIndex].r = static_cast<float>(arrBitMap[k + 2]) / 255.f;
+			k += 3;
+		}
+		++k;
+	}
+
+	delete[] arrBitMap;
+
+	return true;
+}
+
 void CTerrain::SetTerrainCoordinates()
 {
 	size_t nIndex = 0;
@@ -233,6 +295,22 @@ bool CTerrain::BuildTerrainModel()
 	m_arrTerrainModel = new SModel[m_nVertexCount];
 
 	size_t nIndex = 0, nIndex1 = 0, nIndex2 = 0, nIndex3 = 0, nIndex4 = 0;
+	const auto funcProcessVertices = [this, &nIndex](size_t nIndex1, float tu, float tv)
+	{
+		m_arrTerrainModel[nIndex].x = m_arrHeightMap[nIndex1].x;
+		m_arrTerrainModel[nIndex].y = m_arrHeightMap[nIndex1].y;
+		m_arrTerrainModel[nIndex].z = m_arrHeightMap[nIndex1].z;
+		m_arrTerrainModel[nIndex].tu = tu;
+		m_arrTerrainModel[nIndex].tv = tv;
+		m_arrTerrainModel[nIndex].nx = m_arrHeightMap[nIndex1].nx;
+		m_arrTerrainModel[nIndex].ny = m_arrHeightMap[nIndex1].ny;
+		m_arrTerrainModel[nIndex].nz = m_arrHeightMap[nIndex1].nz;
+		m_arrTerrainModel[nIndex].r = m_arrHeightMap[nIndex1].r;
+		m_arrTerrainModel[nIndex].g = m_arrHeightMap[nIndex1].g;
+		m_arrTerrainModel[nIndex].b = m_arrHeightMap[nIndex1].b;
+		++nIndex;
+	};
+
 	for(size_t j = 0; j < m_nTerrainHeight - 1; ++j)
 	{
 		for(size_t i = 0; i < m_nTerrainWidth - 1; ++i)
@@ -242,71 +320,12 @@ bool CTerrain::BuildTerrainModel()
 			nIndex3 = m_nTerrainWidth * (j + 1) + i;	//Bottom left
 			nIndex4 = m_nTerrainWidth * (j + 1) + i + 1;	//Bottom right
 
-			// Triangle 1 - Upper left.
-			m_arrTerrainModel[nIndex].x = m_arrHeightMap[nIndex1].x;
-			m_arrTerrainModel[nIndex].y = m_arrHeightMap[nIndex1].y;
-			m_arrTerrainModel[nIndex].z = m_arrHeightMap[nIndex1].z;
-			m_arrTerrainModel[nIndex].tu = 0.f;
-			m_arrTerrainModel[nIndex].tv = 0.f;
-			m_arrTerrainModel[nIndex].nx = m_arrHeightMap[nIndex1].nx;
-			m_arrTerrainModel[nIndex].ny = m_arrHeightMap[nIndex1].ny;
-			m_arrTerrainModel[nIndex].nz = m_arrHeightMap[nIndex1].nz;
-			++nIndex;
-
-			// Triangle 1 - Upper right.
-			m_arrTerrainModel[nIndex].x = m_arrHeightMap[nIndex2].x;
-			m_arrTerrainModel[nIndex].y = m_arrHeightMap[nIndex2].y;
-			m_arrTerrainModel[nIndex].z = m_arrHeightMap[nIndex2].z;
-			m_arrTerrainModel[nIndex].tu = 1.f;
-			m_arrTerrainModel[nIndex].tv = 0.f;
-			m_arrTerrainModel[nIndex].nx = m_arrHeightMap[nIndex2].nx;
-			m_arrTerrainModel[nIndex].ny = m_arrHeightMap[nIndex2].ny;
-			m_arrTerrainModel[nIndex].nz = m_arrHeightMap[nIndex2].nz;
-			++nIndex;
-
-			// Triangle 1 - Bottom left.
-			m_arrTerrainModel[nIndex].x = m_arrHeightMap[nIndex3].x;
-			m_arrTerrainModel[nIndex].y = m_arrHeightMap[nIndex3].y;
-			m_arrTerrainModel[nIndex].z = m_arrHeightMap[nIndex3].z;
-			m_arrTerrainModel[nIndex].tu = 0.f;
-			m_arrTerrainModel[nIndex].tv = 1.f;
-			m_arrTerrainModel[nIndex].nx = m_arrHeightMap[nIndex3].nx;
-			m_arrTerrainModel[nIndex].ny = m_arrHeightMap[nIndex3].ny;
-			m_arrTerrainModel[nIndex].nz = m_arrHeightMap[nIndex3].nz;
-			++nIndex;
-
-			// Triangle 2 - Bottom left.
-			m_arrTerrainModel[nIndex].x = m_arrHeightMap[nIndex3].x;
-			m_arrTerrainModel[nIndex].y = m_arrHeightMap[nIndex3].y;
-			m_arrTerrainModel[nIndex].z = m_arrHeightMap[nIndex3].z;
-			m_arrTerrainModel[nIndex].tu = 0.f;
-			m_arrTerrainModel[nIndex].tv = 1.f;
-			m_arrTerrainModel[nIndex].nx = m_arrHeightMap[nIndex3].nx;
-			m_arrTerrainModel[nIndex].ny = m_arrHeightMap[nIndex3].ny;
-			m_arrTerrainModel[nIndex].nz = m_arrHeightMap[nIndex3].nz;
-			++nIndex;
-
-			// Triangle 2 - Upper right.
-			m_arrTerrainModel[nIndex].x = m_arrHeightMap[nIndex2].x;
-			m_arrTerrainModel[nIndex].y = m_arrHeightMap[nIndex2].y;
-			m_arrTerrainModel[nIndex].z = m_arrHeightMap[nIndex2].z;
-			m_arrTerrainModel[nIndex].tu = 1.f;
-			m_arrTerrainModel[nIndex].tv = 0.f;
-			m_arrTerrainModel[nIndex].nx = m_arrHeightMap[nIndex2].nx;
-			m_arrTerrainModel[nIndex].ny = m_arrHeightMap[nIndex2].ny;
-			m_arrTerrainModel[nIndex].nz = m_arrHeightMap[nIndex2].nz;
-			++nIndex;
-
-			// Triangle 2 - Bottom right.
-			m_arrTerrainModel[nIndex].x = m_arrHeightMap[nIndex4].x;
-			m_arrTerrainModel[nIndex].y = m_arrHeightMap[nIndex4].y;
-			m_arrTerrainModel[nIndex].z = m_arrHeightMap[nIndex4].z;
-			m_arrTerrainModel[nIndex].tu = 1.f;
-			m_arrTerrainModel[nIndex].tv = 1.f;
-			m_arrTerrainModel[nIndex].nx = m_arrHeightMap[nIndex4].nx;
-			m_arrTerrainModel[nIndex].ny = m_arrHeightMap[nIndex4].ny;
-			m_arrTerrainModel[nIndex].nz = m_arrHeightMap[nIndex4].nz;
-			++nIndex;
+			funcProcessVertices(nIndex1, 0.f, 0.f); // Triangle 1 - Upper left.
+			funcProcessVertices(nIndex2, 1.f, 0.f); // Triangle 1 - Upper right.
+			funcProcessVertices(nIndex3, 0.f, 1.f); // Triangle 1 - Bottom left.
+			funcProcessVertices(nIndex3, 0.f, 1.f); // Triangle 2 - Bottom left.			
+			funcProcessVertices(nIndex2, 1.f, 0.f); // Triangle 2 - Upper right.
+			funcProcessVertices(nIndex4, 1.f, 1.f); // Triangle 2 - Bottom right.
 		}
 	}
 

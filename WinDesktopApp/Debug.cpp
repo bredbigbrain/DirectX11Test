@@ -195,7 +195,6 @@ namespace Debug
 		if(nSize == 0)
 			return;
 
-
 		m_nSize = nSize + 1 + nTimeLength;
 
 		if(m_nSize > Debug::MAX_LOG_LENGTH)

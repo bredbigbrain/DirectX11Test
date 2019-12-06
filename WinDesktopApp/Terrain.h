@@ -13,6 +13,7 @@ private:
 		XMFLOAT3 position;
 		XMFLOAT2 texCoord;
 		XMFLOAT3 normal;
+		XMFLOAT3 color;
 	};
 
 	struct SModel
@@ -20,12 +21,14 @@ private:
 		float x = 0, y = 0, z = 0;
 		float tu = 0, tv = 0;
 		float nx = 0, ny = 0, nz = 0;
+		float r{0}, g{0}, b{0};
 	};
 
 	struct SHeightMap
 	{
 		float x = 0, y = 0, z = 0;
 		float nx = 0, ny = 0, nz = 0;
+		float r{0}, g{0}, b{0};
 	};
 
 public:
@@ -41,6 +44,7 @@ private:
 
 	bool LoadSetupFile(const char* lpszFilePath);
 	bool LoadBitmapHeightMap();
+	bool LoadColorMap();
 	void SetTerrainCoordinates();
 	bool BuildTerrainModel();
 	bool CalculateNormals();
@@ -55,6 +59,7 @@ private:
 	int m_nTerrainWidth{0};
 	float m_fHeightScale{1};
 	char* m_lpszTerrainFileName{nullptr};
+	char* m_lpszColorMapFileName{nullptr};
 	SHeightMap* m_arrHeightMap{nullptr};
 	SModel* m_arrTerrainModel{nullptr};
 };

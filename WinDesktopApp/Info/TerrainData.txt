@@ -1,0 +1,5 @@
+Terrain Filename: Res/heightmap.bmp
+Color Map Filename: Res/colormap.bmp
+Terrain Height: 257
+Terrain Width: 257
+Terrain Scaling: 0.1
