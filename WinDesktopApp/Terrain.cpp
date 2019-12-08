@@ -255,9 +255,9 @@ bool CTerrain::LoadColorMap()
 		RETURN_AND_LOG(false);
 
 	size_t k = 0, nIndex = 0;
-	for(size_t j = 0; j < m_nTerrainHeight; j++)
+	for(size_t j = 0; j < m_nTerrainHeight; ++j)
 	{
-		for(size_t i = 0; i < m_nTerrainWidth; i++)
+		for(size_t i = 0; i < m_nTerrainWidth; ++i)
 		{
 			nIndex = m_nTerrainWidth * (m_nTerrainHeight - 1 - j) + i;
 			m_arrHeightMap[nIndex].b = static_cast<float>(arrBitMap[k]) / 255.f;

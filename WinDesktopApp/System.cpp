@@ -62,6 +62,9 @@ bool System::Initialize()
 	if(!m_pTexManager->LoadTexture(m_pDirect3D->GetDevice(), m_pDirect3D->GetDeviceContext(), "Res/dirt01d.tga", 1))
 		RETURN_AND_LOG(false);
 
+	if(!m_pTexManager->LoadTexture(m_pDirect3D->GetDevice(), m_pDirect3D->GetDeviceContext(), "Res/whiteDiff.bmp", 2))
+		RETURN_AND_LOG(false);
+
 	return true;
 }
 

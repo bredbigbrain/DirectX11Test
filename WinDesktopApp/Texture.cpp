@@ -14,8 +14,19 @@ bool CTexture::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceCon
 	int nHeight{0};
 	int nWidth{0};
 
-	if (!LoadTagra(szFileName, nHeight, nWidth))
-		RETURN_AND_LOG(false);
+	bool bSuccess{false};
+	switch(DetermineTextureType(szFileName))
+	{
+	case TextureType::BMP: bSuccess = LoadBMP(szFileName, nHeight, nWidth); break;
+	case TextureType::TGA: bSuccess = LoadTagra(szFileName, nHeight, nWidth); break;
+	default: bSuccess = false;
+	}
+	
+	if(!bSuccess)
+	{
+		Debug::LogNow(1, "CTexture::Initialize: Unsupported texture type! (*%s)", szFileName);
+		return false;
+	}
 
 	D3D11_TEXTURE2D_DESC textureDesc;
 
@@ -36,7 +47,7 @@ bool CTexture::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceCon
 
 	unsigned int nRowPitch = nWidth * 4 * sizeof(unsigned char);
 
-	pDeviceContext->UpdateSubresource(m_pTexture, 0, NULL, m_pRawTagraData, nRowPitch, 0);
+	pDeviceContext->UpdateSubresource(m_pTexture, 0, NULL, m_pRawData, nRowPitch, 0);
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 	
@@ -50,8 +61,8 @@ bool CTexture::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceCon
 
 	pDeviceContext->GenerateMips(m_pTextureView);
 
-	delete[] m_pRawTagraData;
-	m_pRawTagraData = nullptr;
+	delete[] m_pRawData;
+	m_pRawData = nullptr;
 
 	return true;
 }
@@ -60,7 +71,21 @@ void CTexture::Shutdown()
 {
 	RELEASE_AND_NULL(m_pTextureView);
 	RELEASE_AND_NULL(m_pTexture);
-	DELETE_ARR(m_pRawTagraData);
+	DELETE_ARR(m_pRawData);
+}
+
+CTexture::TextureType CTexture::DetermineTextureType(const char * szFileName)
+{
+	const char szBMP[5] = ".bmp";
+	const char szTGA[5] = ".tga";
+
+	size_t nStrLen = strnlen_s(szFileName, MAX_PATH);
+	if(nStrLen > sizeof(szBMP) && lstrcmpA(szFileName + (nStrLen - sizeof(szBMP) + 1), szBMP) == 0)
+		return TextureType::BMP;
+	else if(nStrLen > sizeof(szTGA) && lstrcmpA(szFileName + (nStrLen - sizeof(szTGA) + 1), szTGA) == 0)
+		return TextureType::TGA;
+	else
+		return TextureType::UNDEF;
 }
 
 ID3D11ShaderResourceView* CTexture::GetTexture()
@@ -68,10 +93,10 @@ ID3D11ShaderResourceView* CTexture::GetTexture()
 	return m_pTextureView;
 }
 
-bool CTexture::LoadTagra(const char* szFilePath, int& nHeight, int& nWidth)
+bool CTexture::LoadTagra(const char* pszFilePath, int& nHeight, int& nWidth)
 {
 	FILE* pFile;
-	if (fopen_s(&pFile, szFilePath, "rb") != 0)
+	if (fopen_s(&pFile, pszFilePath, "rb") != 0)
 		RETURN_AND_LOG(false);
 
 	TagraHeader_t tagraFileHeader;
@@ -94,7 +119,12 @@ bool CTexture::LoadTagra(const char* szFilePath, int& nHeight, int& nWidth)
 	if (fclose(pFile) != 0 || nCount != nImageSize)
 		RETURN_AND_LOG(false);
 
-	m_pRawTagraData = new unsigned char[nImageSize];
+	if(m_pRawData)
+	{
+		Debug::LogNow(2, "CTexture::LoadTagra WARNIG: Overriding texture (%s)", pszFilePath);
+		delete[] m_pRawData;
+	}
+	m_pRawData = new unsigned char[nImageSize];
 
 	int index{0};
 	int k = nImageSize - (nWidth * 4);
@@ -103,10 +133,10 @@ bool CTexture::LoadTagra(const char* szFilePath, int& nHeight, int& nWidth)
 	{
 		for (int i = 0; i < nWidth; i++)
 		{
-			m_pRawTagraData[index + 0] = imageData[k + 2];	//r
-			m_pRawTagraData[index + 1] = imageData[k + 1];	//g
-			m_pRawTagraData[index + 2] = imageData[k + 0];	//b
-			m_pRawTagraData[index + 3] = imageData[k + 3];	//a
+			m_pRawData[index + 0] = imageData[k + 2];	//r
+			m_pRawData[index + 1] = imageData[k + 1];	//g
+			m_pRawData[index + 2] = imageData[k + 0];	//b
+			m_pRawData[index + 3] = imageData[k + 3];	//a
 
 			k += 4;
 			index += 4;
@@ -115,5 +145,59 @@ bool CTexture::LoadTagra(const char* szFilePath, int& nHeight, int& nWidth)
 	}
 	
 	delete[] imageData;
+	return true;
+}
+
+bool CTexture::LoadBMP(const char* pszFilePath, int& nHeight, int& nWidth)
+{
+	FILE* pFile;
+	if(fopen_s(&pFile, pszFilePath, "rb") != 0)
+		RETURN_AND_LOG(false);
+
+	BITMAPFILEHEADER bmpHeader;
+	if(fread(&bmpHeader, sizeof(BITMAPFILEHEADER), 1, pFile) != 1)
+		RETURN_AND_LOG(false);
+
+	BITMAPINFOHEADER bmpInfo;
+	if(fread(&bmpInfo, sizeof(BITMAPINFOHEADER), 1, pFile) != 1)
+		RETURN_AND_LOG(false);
+
+	nHeight = bmpInfo.biHeight;
+	nWidth = bmpInfo.biWidth;
+
+	size_t nImageSize = nHeight * (nWidth * 3 + 1);
+	unsigned char* arrBitMap = new unsigned char[nImageSize];
+
+	fseek(pFile, bmpHeader.bfOffBits, SEEK_SET);
+
+	if(fread(arrBitMap, nImageSize, 1, pFile) != 1)
+		RETURN_AND_LOG(false);
+
+	if(fclose(pFile) != 0)
+		RETURN_AND_LOG(false);
+
+	if(m_pRawData)
+	{
+		Debug::LogNow(2, "CTexture::LoadBMP WARNIG: Overriding texture (%s)", pszFilePath);
+		delete[] m_pRawData;
+	}
+	m_pRawData = new unsigned char[nWidth * nHeight * 4];
+
+	size_t k = 0, nIndex = 0;
+	for(size_t j = 0; j < nHeight; ++j)
+	{
+		for(size_t i = 0; i < nWidth; ++i)
+		{
+			m_pRawData[nIndex + 0] = arrBitMap[k + 2];	//r
+			m_pRawData[nIndex + 1] = arrBitMap[k + 1];	//g
+			m_pRawData[nIndex + 2] = arrBitMap[k];		//b
+			m_pRawData[nIndex + 3] = 255;				//a
+			k += 3;
+			nIndex += 4;
+		}
+		++k;
+	}
+	
+	delete[] arrBitMap;
 	return true;
 }
