@@ -2,13 +2,9 @@
 #include "Camera.h"
 #include "Globals.h"
 
-CCamera::CCamera()
+void CCamera::CopyPosition(const CPosition& position)
 {
-}
-
-
-CCamera::~CCamera()
-{
+	m_position = position;
 }
 
 
@@ -17,7 +13,7 @@ void CCamera::SetPosition(float x, float y, float z)
 	m_position.SetPosition(x, y, z);
 }
 
-void CCamera::SetPosition(CPosition* pPosition)
+void CCamera::SetPosition(const CPosition* pPosition)
 {
 	m_position.SetPosition(pPosition);
 }

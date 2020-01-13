@@ -8,11 +8,10 @@ using namespace DirectX;
 class CCamera
 {
 public:
-	CCamera();
-	~CCamera();
+	void CopyPosition(const CPosition& position);
 
 	void SetPosition(float, float, float);
-	void SetPosition(CPosition* pPosition);
+	void SetPosition(const CPosition* pPosition);
 
 	void SetRotation(float, float, float);
 	void SetRotation(CPosition* pPosition);

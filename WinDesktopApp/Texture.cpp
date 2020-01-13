@@ -19,14 +19,16 @@ bool CTexture::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceCon
 	{
 	case TextureType::BMP: bSuccess = LoadBMP(szFileName, nHeight, nWidth); break;
 	case TextureType::TGA: bSuccess = LoadTagra(szFileName, nHeight, nWidth); break;
-	default: bSuccess = false;
+	default: 
+	{
+		bSuccess = false;
+		Debug::LogNow(1, "CTexture::Initialize: Unsupported texture type! (*%s)", szFileName);
+		break;
+	}
 	}
 	
 	if(!bSuccess)
-	{
-		Debug::LogNow(1, "CTexture::Initialize: Unsupported texture type! (*%s)", szFileName);
-		return false;
-	}
+		RETURN_AND_LOG(false);
 
 	D3D11_TEXTURE2D_DESC textureDesc;
 
@@ -165,7 +167,7 @@ bool CTexture::LoadBMP(const char* pszFilePath, int& nHeight, int& nWidth)
 	nHeight = bmpInfo.biHeight;
 	nWidth = bmpInfo.biWidth;
 
-	size_t nImageSize = nHeight * (nWidth * 3 + 1);
+	size_t nImageSize = nHeight * (nWidth * 3 + ((nWidth % 2) == 0 ? 0 : 1));
 	unsigned char* arrBitMap = new unsigned char[nImageSize];
 
 	fseek(pFile, bmpHeader.bfOffBits, SEEK_SET);

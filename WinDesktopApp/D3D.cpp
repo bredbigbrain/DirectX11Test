@@ -289,6 +289,11 @@ void D3D::Shutdown()
 	RELEASE_AND_NULL(m_pSwapChain);
 }
 
+void D3D::BeginScene(const XMVECTORF32& color)
+{
+	BeginScene(color.f[0], color.f[1], color.f[2], color.f[3]);
+}
+
 void D3D::BeginScene(float r, float g, float b, float a)
 {
 	float color[4]{r, g, b, a};

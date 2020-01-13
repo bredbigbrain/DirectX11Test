@@ -31,7 +31,7 @@ SVertexOutput vsMain(SVertexInput input)
 	output.position = mul(output.position, matrProjection);
 
 	output.uvMain = input.uvMain;
-	output.normal = input.normal;
+	output.normal = normalize(mul(input.normal, (float3x3)matrWorld));
 
 	return output;
 }

@@ -36,31 +36,31 @@ void CShaderManager::Shutdown()
 	SHUTDOWN_DELETE(m_pTerrainShader);
 }
 
-bool CShaderManager::RenderColorShader(ID3D11DeviceContext * pDeviceContext, int nIndexCount, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection)
+bool CShaderManager::RenderColorShader(ID3D11DeviceContext * pDeviceContext, size_t nIndexCount, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection)
 {
 	return m_pColorShader->Render(pDeviceContext, nIndexCount, matrWorld, matrView, matrProjection);
 }
 
-bool CShaderManager::RenderTextureShader(ID3D11DeviceContext * pDeviceContext, int nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
+bool CShaderManager::RenderTextureShader(ID3D11DeviceContext * pDeviceContext, size_t nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
 	, ID3D11ShaderResourceView* pTextureSRV)
 {
 	return m_pTextureShader->Render(pDeviceContext, nIndexCount, matrWorld, matrView, matrProjection, pTextureSRV);
 }
 
-bool CShaderManager::RenderFontShader(ID3D11DeviceContext * pDeviceContext, int nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
+bool CShaderManager::RenderFontShader(ID3D11DeviceContext * pDeviceContext, size_t nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
 	, ID3D11ShaderResourceView * pTextureSRV, XMFLOAT4 color)
 {
 	return m_pFontShader->Render(pDeviceContext, nIndexCount, matrWorld, matrView, matrProjection, pTextureSRV, color);
 }
 
-bool CShaderManager::RenderLightShader(ID3D11DeviceContext* pDeviceContext, int nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
+bool CShaderManager::RenderLightShader(ID3D11DeviceContext* pDeviceContext, size_t nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
 	, ID3D11ShaderResourceView* pTextureSRV, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor)
 {
 	return m_pLightShader->Render(pDeviceContext, nIndexCount, matrWorld, matrView, matrProjection, pTextureSRV, lightDirection, diffuseColor);
 }
 
-bool CShaderManager::RenderTerrainShader(ID3D11DeviceContext* pDeviceContext, int nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
-	, ID3D11ShaderResourceView* pTextureSRV, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor)
+bool CShaderManager::RenderTerrainShader(ID3D11DeviceContext* pDeviceContext, size_t nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
+	, ID3D11ShaderResourceView* pDiffTextureSRV, ID3D11ShaderResourceView* pNormTextureSRV, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor)
 {
-	return m_pTerrainShader->Render(pDeviceContext, nIndexCount, matrWorld, matrView, matrProjection, pTextureSRV, lightDirection, diffuseColor);
+	return m_pTerrainShader->Render(pDeviceContext, nIndexCount, matrWorld, matrView, matrProjection, pDiffTextureSRV, pNormTextureSRV, lightDirection, diffuseColor);
 }

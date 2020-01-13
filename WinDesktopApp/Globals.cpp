@@ -13,6 +13,11 @@ namespace Math3DNS
 	inline float DegreesToRadians(float fDegrees) { return fDegrees * RADIANS_PER_DEGREE_f; }
 	inline float RadiansToDegrees(float fRadians) { return fRadians / RADIANS_PER_DEGREE_f; }
 
+	DirectX::XMFLOAT3 operator+(const DirectX::XMFLOAT3 & lhs, const DirectX::XMFLOAT3 & rhs)
+	{
+		return DirectX::XMFLOAT3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
+	}
+
 	namespace Radians
 	{
 		inline float Sin(float fRadians)

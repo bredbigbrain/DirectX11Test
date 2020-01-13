@@ -1,5 +1,6 @@
 #pragma once
 
+#include "stdafx.h"
 #include "D3D.h"
 #include "Input.h"
 #include "ShaderManager.h"
@@ -9,12 +10,11 @@
 #include "Position.h"
 #include "Terrain.h"
 #include "LightSource.h"
+#include "Model.h"
 
 class CZone
 {
 public:
-	CZone();
-	~CZone();
 
 	bool Initialize(D3D* pDirect3D, HWND hWnd, int nScreenWidht, int nScreenHeight, float fScreenDepth);
 	void Shutdown();
@@ -25,6 +25,8 @@ private:
 	bool Render(D3D* pDirect3D, CShaderManager* pShManager, CTextureManager* pTexManager);
 
 private:
+	std::map<CShaderManager::EShader, std::vector<std::pair<Model*, size_t>>> m_mapModels;  //<Shader ,<Model, textureIndex>>
+
 	CUserInterface* m_pUserInterface{nullptr};
 	CCamera* m_pCamera{nullptr};
 	CPosition* m_pPosition{nullptr};

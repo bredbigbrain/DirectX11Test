@@ -18,7 +18,7 @@ void CTextureShader::Shutdown()
 	ShutdownShader();
 }
 
-bool CTextureShader::Render(ID3D11DeviceContext* pDeviceContext, int nIndexCount, XMMATRIX matrWorld
+bool CTextureShader::Render(ID3D11DeviceContext* pDeviceContext, size_t nIndexCount, XMMATRIX matrWorld
 	, XMMATRIX matrView, XMMATRIX matrProjection, ID3D11ShaderResourceView* pTexture)
 {
 	if (!SetShaderParameters(pDeviceContext, matrWorld, matrView, matrProjection, pTexture))
@@ -82,7 +82,7 @@ bool CTextureShader::SetShaderParameters(ID3D11DeviceContext* pDeviceContext, XM
 	return true;
 }
 
-void CTextureShader::RenderShader(ID3D11DeviceContext* pDeviceContext, int nIndexCount)
+void CTextureShader::RenderShader(ID3D11DeviceContext* pDeviceContext, size_t nIndexCount)
 {
 	pDeviceContext->IASetInputLayout(m_pInputLayout);
 

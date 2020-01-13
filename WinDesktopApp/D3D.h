@@ -5,6 +5,7 @@
 
 #include"d3d11.h"
 #include"directxmath.h"
+#include "DirectXColors.h"
 
 using namespace DirectX;
 
@@ -23,6 +24,7 @@ public:
 		, bool bFullScreen, float fScreenDepth, float fScreenNear);
 	void Shutdown();
 
+	void BeginScene(const XMVECTORF32& color);
 	void BeginScene(float r, float g, float b, float a);
 	void EndScene();
 

@@ -7,7 +7,7 @@ bool CLightShader::Initialize(ID3D11Device* pDevice, HWND hwnd)
 	return InitializeShader(pDevice, hwnd, L"Shaders/Light_VS.hlsl", L"Shaders/Light_PS.hlsl");
 }
 
-bool CLightShader::Render(ID3D11DeviceContext * pDeviceContext, int nIndexCount, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection, ID3D11ShaderResourceView * pTexture, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor)
+bool CLightShader::Render(ID3D11DeviceContext * pDeviceContext, size_t nIndexCount, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection, ID3D11ShaderResourceView * pTexture, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor)
 {
 	if(!SetShaderParameters(pDeviceContext, matrWorld, matrView, matrProjection, pTexture, lightDirection, diffuseColor))
 		RETURN_AND_LOG(false);
@@ -73,7 +73,8 @@ bool CLightShader::InitializeShader(ID3D11Device * pDevice, HWND hwnd, const WCH
 	return true;
 }
 
-bool CLightShader::SetShaderParameters(ID3D11DeviceContext * pDeviceContext, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection, ID3D11ShaderResourceView * pTexture, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor)
+bool CLightShader::SetShaderParameters(ID3D11DeviceContext * pDeviceContext, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection
+	, ID3D11ShaderResourceView * pTexture, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor)
 {
 	if(!CTextureShader::SetShaderParameters(pDeviceContext, matrWorld, matrView, matrProjection, pTexture))
 		RETURN_AND_LOG(false);

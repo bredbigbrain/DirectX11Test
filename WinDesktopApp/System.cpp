@@ -50,20 +50,11 @@ bool System::Initialize()
 	}
 
 	m_pTexManager = new CTextureManager();
-	if(!m_pTexManager->Initialize(10))
+	if(!m_pTexManager->Initialize(m_pDirect3D->GetDevice(), m_pDirect3D->GetDeviceContext()))
 	{
 		QUIK_LOG_TM("ERROR", "System::Initialize: Could not initialize TextureManager!");
 		return false;
 	}
-
-	if(!m_pTexManager->LoadTexture(m_pDirect3D->GetDevice(), m_pDirect3D->GetDeviceContext(), "Res/test.tga", 0))
-		RETURN_AND_LOG(false);
-
-	if(!m_pTexManager->LoadTexture(m_pDirect3D->GetDevice(), m_pDirect3D->GetDeviceContext(), "Res/dirt01d.tga", 1))
-		RETURN_AND_LOG(false);
-
-	if(!m_pTexManager->LoadTexture(m_pDirect3D->GetDevice(), m_pDirect3D->GetDeviceContext(), "Res/whiteDiff.bmp", 2))
-		RETURN_AND_LOG(false);
 
 	return true;
 }

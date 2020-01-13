@@ -13,15 +13,17 @@ public:
 	bool Initialize(ID3D11Device* pDevice, HWND hwnd);
 	void Shutdown();
 
-	bool RenderColorShader(ID3D11DeviceContext* pDeviceContext, int nIndexCount, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection);
-	bool RenderTextureShader(ID3D11DeviceContext* pDeviceContext, int nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
+	enum class EShader { COLOR, TEXTURE, FONT, LIGTH, TERRAIN };
+
+	bool RenderColorShader(ID3D11DeviceContext* pDeviceContext, size_t nIndexCount, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection);
+	bool RenderTextureShader(ID3D11DeviceContext* pDeviceContext, size_t nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
 		, ID3D11ShaderResourceView* pTextureSRV);
-	bool RenderFontShader(ID3D11DeviceContext* pDeviceContext, int nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
+	bool RenderFontShader(ID3D11DeviceContext* pDeviceContext, size_t nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
 		, ID3D11ShaderResourceView* pTextureSRV, XMFLOAT4 color);
-	bool RenderLightShader(ID3D11DeviceContext* pDeviceContext, int nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
+	bool RenderLightShader(ID3D11DeviceContext* pDeviceContext, size_t nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
 		, ID3D11ShaderResourceView* pTextureSRV, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor);
-	bool RenderTerrainShader(ID3D11DeviceContext* pDeviceContext, int nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
-		, ID3D11ShaderResourceView* pTextureSRV, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor);
+	bool RenderTerrainShader(ID3D11DeviceContext* pDeviceContext, size_t nIndexCount, XMMATRIX& matrWorld, XMMATRIX& matrView, XMMATRIX& matrProjection
+		, ID3D11ShaderResourceView* pDiffTextureSRV, ID3D11ShaderResourceView* pNormTextureSRV, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor);
 
 private:
 	CColorShader* m_pColorShader{nullptr};

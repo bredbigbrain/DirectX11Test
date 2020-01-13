@@ -20,7 +20,7 @@ void CColorShader::Shutdown()
 }
 
 
-bool CColorShader::Render(ID3D11DeviceContext* pDeviceContext, int nIndexCount, XMMATRIX matrWorld, XMMATRIX matrView,
+bool CColorShader::Render(ID3D11DeviceContext* pDeviceContext, size_t nIndexCount, XMMATRIX matrWorld, XMMATRIX matrView,
 	XMMATRIX matrProjection)
 {
 	if (!SetMatrixBuffer(pDeviceContext, matrWorld, matrView, matrProjection))
@@ -69,7 +69,7 @@ bool CColorShader::InitializeShader(ID3D11Device* pDevice, HWND hwnd, const WCHA
 
 
 
-void CColorShader::RenderShader(ID3D11DeviceContext* pDeviceContext, int nIndexCount)
+void CColorShader::RenderShader(ID3D11DeviceContext* pDeviceContext, size_t nIndexCount)
 {
 	pDeviceContext->IASetInputLayout(m_pInputLayout);
 

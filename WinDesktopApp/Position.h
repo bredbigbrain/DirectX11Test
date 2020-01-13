@@ -7,29 +7,32 @@ using namespace DirectX;
 class CPosition
 {
 public:
+	CPosition() = default;
+	CPosition(const XMFLOAT3& position, const XMFLOAT3& rotation);
+
 	void SetPosition(float fX, float fY, float fZ);
-	void SetPosition(CPosition* pPosition);
+	void SetPosition(const CPosition* pPosition);
 
 	void SetRotation(float fX, float fY, float fZ);
-	void SetRotation(CPosition* pPosition);
+	void SetRotation(const CPosition* pPosition);
 
-	void GetPosition(float& fX, float& fY, float& fZ);
-	void GetRotation(float& fX, float& fY, float& fZ);
+	void GetPosition(float& fX, float& fY, float& fZ) const;
+	void GetRotation(float& fX, float& fY, float& fZ) const;
 
 	void SetFrameTime(float fTime);
 
-	XMFLOAT3 GetPosition();
-	XMVECTOR GetPositionVector();
+	XMFLOAT3 GetPosition() const;
+	XMVECTOR GetPositionVector() const;
 
-	XMFLOAT3 GetRotation();
+	XMFLOAT3 GetRotation() const;
 
-	XMMATRIX GetRotationMatrix();
+	XMMATRIX GetRotationMatrix() const;
 	
-	XMVECTOR GetForwardVector();
-	XMVECTOR GetForwardVector(XMMATRIX matrRotation);
+	XMVECTOR GetForwardVector() const;
+	XMVECTOR GetForwardVector(XMMATRIX matrRotation) const;
 
-	XMVECTOR GetUpVector();
-	XMVECTOR GetUpVector(XMMATRIX matrRotation);
+	XMVECTOR GetUpVector() const;
+	XMVECTOR GetUpVector(XMMATRIX matrRotation) const;
 
 	void MoveForward(bool bKeyDown);
 	void MoveBackward(bool bKeyDown);

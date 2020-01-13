@@ -13,22 +13,71 @@ private:
 		XMFLOAT3 position;
 		XMFLOAT2 texCoord;
 		XMFLOAT3 normal;
+		XMFLOAT3 tangent;
+		XMFLOAT3 binormal;
 		XMFLOAT3 color;
+	};
+
+	struct SVector
+	{
+		float x{0}, y{0}, z{0};
 	};
 
 	struct SModel
 	{
-		float x = 0, y = 0, z = 0;
-		float tu = 0, tv = 0;
-		float nx = 0, ny = 0, nz = 0;
+		float x{0}, y{0}, z{0};
+		float tu{0}, tv{0};
+		float nx{0}, ny{0}, nz{0};
+		float tx{0}, ty{0}, tz{0};
+		float bx{0}, by{0}, bz{0};
 		float r{0}, g{0}, b{0};
+
+		void SetTangent(const SVector& vec)
+		{
+			bx = vec.x;
+			by = vec.y;
+			bz = vec.z;
+		}
+
+		void SetBinormal(const SVector& vec)
+		{
+			bx = vec.x;
+			by = vec.y;
+			bz = vec.z;
+		}
 	};
 
 	struct SHeightMap
 	{
-		float x = 0, y = 0, z = 0;
-		float nx = 0, ny = 0, nz = 0;
+		float x{0}, y{0}, z{0};
+		float nx{0}, ny{0}, nz{0};
 		float r{0}, g{0}, b{0};
+	};
+
+	struct STempVertex
+	{
+		float x{0}, y{0}, z{0};
+		float tu{0}, tv{0};
+		float nx{0}, ny{0}, nz{0};
+
+		STempVertex() = default;
+		STempVertex(const SModel& model) 
+			: x{model.x}, y{model.y}, z{model.z}
+			, nx{model.nx}, ny{model.ny}, nz{model.nz}
+			, tu{model.tu}, tv{model.tv}
+		{}
+
+		void Copy(const SModel& model)
+		{
+			x = model.x;
+			y = model.y;
+			z = model.z;
+			nx = model.nx;
+			ny = model.ny;
+			nz = model.nz;
+			tu = model.tu;
+			tv = model.tv;
+		}
 	};
 
 public:
@@ -48,6 +97,8 @@ private:
 	void SetTerrainCoordinates();
 	bool BuildTerrainModel();
 	bool CalculateNormals();
+	void CalculateTerrainVectors();
+	void CalculateTangetnBinormal(STempVertex vertex1, STempVertex vertex2, STempVertex vertex3, SVector& tangent, SVector& binormal);
 
 private:
 	ID3D11Buffer* m_pVertexBuffer{nullptr};

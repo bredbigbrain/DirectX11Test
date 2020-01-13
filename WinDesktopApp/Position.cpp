@@ -2,14 +2,19 @@
 #include "Globals.h"
 #include <math.h>
 
-float m_fMaxMoveSpeed = 2.5f;
-float m_fMaxTurnSpeed = 0.15f;
+float m_fMaxMoveSpeed = 1.f;
+float m_fMaxTurnSpeed = 0.1f;
+
+CPosition::CPosition(const XMFLOAT3& position, const XMFLOAT3& rotation)
+	: m_fPositionX(position.x), m_fPositionY(position.y), m_fPositionZ(position.z)
+	, m_fRotationX(rotation.x), m_fRotationY(rotation.y), m_fRotationZ(rotation.z)
+{ }
 
 void CPosition::SetPosition(float fX, float fY, float fZ)
 {
 	m_fPositionX = fX; m_fPositionY = fY; m_fPositionZ = fZ;
 }
-void CPosition::SetPosition(CPosition* pPosition)
+void CPosition::SetPosition(const CPosition* pPosition)
 {
 	pPosition->GetPosition(m_fPositionX, m_fPositionY, m_fPositionZ);
 }
@@ -18,34 +23,34 @@ void CPosition::SetRotation(float fX, float fY, float fZ)
 {
 	m_fRotationX = fX; m_fRotationY = fY; m_fRotationZ = fZ;
 }
-void CPosition::SetRotation(CPosition* pPosition)
+void CPosition::SetRotation(const CPosition* pPosition)
 {
 	pPosition->GetRotation(m_fRotationX, m_fRotationY, m_fRotationZ);
 }
 
-void CPosition::GetPosition(float& fX, float& fY, float& fZ)
+void CPosition::GetPosition(float& fX, float& fY, float& fZ) const
 {
 	fX = m_fPositionX; fY = m_fPositionY; fZ = m_fPositionZ;
 }
-XMFLOAT3 CPosition::GetPosition()
+XMFLOAT3 CPosition::GetPosition() const
 {
 	return XMFLOAT3(m_fPositionX, m_fPositionY, m_fPositionZ);
 }
-XMVECTOR CPosition::GetPositionVector()
+XMVECTOR CPosition::GetPositionVector() const
 {
 	return XMLoadFloat3(&GetPosition());
 }
 
-void CPosition::GetRotation(float& fX, float& fY, float& fZ)
+void CPosition::GetRotation(float& fX, float& fY, float& fZ) const
 {
 	fX = m_fRotationX; fY = m_fRotationY; fZ = m_fRotationZ;
 }
-XMFLOAT3 CPosition::GetRotation()
+XMFLOAT3 CPosition::GetRotation() const
 {
 	return XMFLOAT3(m_fRotationX, m_fRotationY, m_fRotationZ);
 }
 
-XMMATRIX CPosition::GetRotationMatrix()
+XMMATRIX CPosition::GetRotationMatrix() const
 {
 	float pitch = Math3DNS::DegreesToRadians(m_fRotationX);
 	float yaw = Math3DNS::DegreesToRadians(m_fRotationY);
@@ -54,7 +59,7 @@ XMMATRIX CPosition::GetRotationMatrix()
 	return XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
 }
 
-XMVECTOR CPosition::GetForwardVector()
+XMVECTOR CPosition::GetForwardVector() const
 {
 	XMVECTOR lookAtVector = XMLoadFloat3(&Math3DNS::F3_FORWARD);
 	lookAtVector = XMVector3TransformCoord(lookAtVector, GetRotationMatrix());
@@ -64,7 +69,7 @@ XMVECTOR CPosition::GetForwardVector()
 	return XMVectorAdd(positionVector, lookAtVector);
 }
 
-XMVECTOR CPosition::GetForwardVector(XMMATRIX matrRotation)
+XMVECTOR CPosition::GetForwardVector(XMMATRIX matrRotation) const
 {
 	XMVECTOR lookAtVector = XMLoadFloat3(&Math3DNS::F3_FORWARD);
 	lookAtVector = XMVector3TransformCoord(lookAtVector, matrRotation);
@@ -74,13 +79,13 @@ XMVECTOR CPosition::GetForwardVector(XMMATRIX matrRotation)
 	return XMVectorAdd(positionVector, lookAtVector);
 }
 
-XMVECTOR CPosition::GetUpVector()
+XMVECTOR CPosition::GetUpVector() const
 {
 	XMVECTOR upVector = XMLoadFloat3(&Math3DNS::F3_UP);
 	return XMVector3TransformCoord(upVector, GetRotationMatrix());
 }
 
-XMVECTOR CPosition::GetUpVector(XMMATRIX matrRotation)
+XMVECTOR CPosition::GetUpVector(XMMATRIX matrRotation) const
 {
 	XMVECTOR upVector = XMLoadFloat3(&Math3DNS::F3_UP);
 	return XMVector3TransformCoord(upVector, matrRotation);
@@ -95,7 +100,7 @@ void CPosition::MoveForward(bool bKeyDown)
 {
 	if(bKeyDown)
 	{
-		m_fForwardSpeed += m_fFrameTime * 1.f;
+		m_fForwardSpeed += m_fFrameTime * 0.001f;
 		if(m_fForwardSpeed > m_fMaxMoveSpeed)
 			m_fForwardSpeed = m_fMaxMoveSpeed;
 	}
@@ -118,7 +123,7 @@ void CPosition::MoveBackward(bool bKeyDown)
 {
 	if(bKeyDown)
 	{
-		m_fBackwardSpeed += m_fFrameTime * 1.f;
+		m_fBackwardSpeed += m_fFrameTime * 0.001f;
 		if(m_fBackwardSpeed > m_fMaxMoveSpeed)
 			m_fBackwardSpeed = m_fMaxMoveSpeed;
 	}

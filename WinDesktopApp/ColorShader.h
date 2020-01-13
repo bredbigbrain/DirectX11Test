@@ -15,10 +15,10 @@ public:
 
 	bool Initialize(ID3D11Device* pDeviceContext, HWND hwnd);
 	void Shutdown();
-	bool Render(ID3D11DeviceContext* pDeviceContext, int nIndexCount
+	bool Render(ID3D11DeviceContext* pDeviceContext, size_t nIndexCount
 		, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection);
 
 private:
 	bool InitializeShader(ID3D11Device* pDevice, HWND hwnd, const WCHAR* szFileNameVS, const WCHAR* szFileNamePS);
-	void RenderShader(ID3D11DeviceContext*, int);
+	void RenderShader(ID3D11DeviceContext* pDeviceContext, size_t nIndexCount);
 };

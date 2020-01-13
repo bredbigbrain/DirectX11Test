@@ -2,6 +2,19 @@
 #include "Defines.h"
 #include "Debug.h"
 
+bool CTextureManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
+{
+	if(!Initialize(m_vecTextures.size()))
+		RETURN_AND_LOG(false);
+
+	for(size_t i = 0; i < m_vecTextures.size(); ++i)
+	{
+		if(!LoadTexture(pDevice, pDeviceContext, m_vecTextures[i].c_str(), i))
+			RETURN_AND_LOG(false);
+	}
+	return true;
+}
+
 bool CTextureManager::Initialize(size_t nTexturesCount)
 {
 	m_nTexturesCount = nTexturesCount;

@@ -13,7 +13,7 @@ void CFontShader::Shutdown()
 	ShutdownShader();
 }
 
-bool CFontShader::Render(ID3D11DeviceContext * pDeviceContext, int nIndexCount, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection, ID3D11ShaderResourceView * pTextureSRV, XMFLOAT4 color)
+bool CFontShader::Render(ID3D11DeviceContext * pDeviceContext, size_t nIndexCount, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection, ID3D11ShaderResourceView * pTextureSRV, XMFLOAT4 color)
 {
 	if(!SetShaderParameters(pDeviceContext, matrWorld, matrView, matrProjection, pTextureSRV, color))
 		return false;
@@ -58,7 +58,7 @@ bool CFontShader::SetShaderParameters(ID3D11DeviceContext* pDeviceContext, XMMAT
 	return true;
 }
 
-void CFontShader::RenderShader(ID3D11DeviceContext* pDeviceContext, int nIndexCount)
+void CFontShader::RenderShader(ID3D11DeviceContext* pDeviceContext, size_t nIndexCount)
 {
 	CTextureShader::RenderShader(pDeviceContext, nIndexCount);
 }

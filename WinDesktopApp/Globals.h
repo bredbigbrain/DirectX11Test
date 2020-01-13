@@ -14,6 +14,8 @@ namespace Math3DNS
 	extern inline float DegreesToRadians(float fDegrees);
 	extern inline float RadiansToDegrees(float fRadians);
 
+	DirectX::XMFLOAT3 operator+ (const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs);
+
 	namespace Radians
 	{
 		inline float Sin(float fRadians);

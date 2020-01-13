@@ -25,6 +25,8 @@ bool CTerrain::Initialize(ID3D11Device* pDevice, const char* lpszSetupFilePath)
 
 	DELETE_ARR(m_arrHeightMap);
 
+	CalculateTerrainVectors();
+
 	if(!InitializeBuffers(pDevice))
 		RETURN_AND_LOG(false);
 
@@ -71,6 +73,8 @@ bool CTerrain::InitializeBuffers(ID3D11Device* pDevice)
 		arrVerticies[i].position = XMFLOAT3(m_arrTerrainModel[i].x, m_arrTerrainModel[i].y, m_arrTerrainModel[i].z);
 		arrVerticies[i].texCoord = XMFLOAT2(m_arrTerrainModel[i].tu, m_arrTerrainModel[i].tv);
 		arrVerticies[i].normal = XMFLOAT3(m_arrTerrainModel[i].nx, m_arrTerrainModel[i].ny, m_arrTerrainModel[i].nz);
+		arrVerticies[i].tangent = XMFLOAT3(m_arrTerrainModel[i].tx, m_arrTerrainModel[i].ty, m_arrTerrainModel[i].tz);
+		arrVerticies[i].binormal = XMFLOAT3(m_arrTerrainModel[i].bx, m_arrTerrainModel[i].by, m_arrTerrainModel[i].bz);
 		arrVerticies[i].color = XMFLOAT3(m_arrTerrainModel[i].r, m_arrTerrainModel[i].g, m_arrTerrainModel[i].b);
 		arrIndicies[i] = i;
 	}
@@ -455,5 +459,83 @@ bool CTerrain::CalculateNormals()
 	normals = 0;
 
 	return true;
+}
+
+void CTerrain::CalculateTerrainVectors()
+{
+	STempVertex vertex1, vertex2, vertex3;
+	SVector tangent, binormal;
+
+	size_t nIndex{0};
+	size_t nFacesCount = m_nVertexCount / 3;
+	for(size_t i = 0; i < nFacesCount; ++i)
+	{
+		vertex1.Copy(m_arrTerrainModel[nIndex++]);
+		vertex2.Copy(m_arrTerrainModel[nIndex++]);
+		vertex3.Copy(m_arrTerrainModel[nIndex++]);
+
+		CalculateTangetnBinormal(vertex1, vertex2, vertex3, tangent, binormal);
+
+		m_arrTerrainModel[nIndex - 1].SetTangent(tangent);
+		m_arrTerrainModel[nIndex - 2].SetTangent(tangent);
+		m_arrTerrainModel[nIndex - 3].SetTangent(tangent);
+		
+		m_arrTerrainModel[nIndex - 1].SetBinormal(binormal);
+		m_arrTerrainModel[nIndex - 2].SetBinormal(binormal);
+		m_arrTerrainModel[nIndex - 3].SetBinormal(binormal);
+	}
+}
+
+void CTerrain::CalculateTangetnBinormal(STempVertex vertex1, STempVertex vertex2, STempVertex vertex3, SVector& tangent, SVector& binormal)
+{
+	float vector1[3], vector2[3];
+	float tuVector[2], tvVector[2];
+	float den;
+	float length;
+
+
+	// Calculate the two vectors for this face.
+	vector1[0] = vertex2.x - vertex1.x;
+	vector1[1] = vertex2.y - vertex1.y;
+	vector1[2] = vertex2.z - vertex1.z;
+
+	vector2[0] = vertex3.x - vertex1.x;
+	vector2[1] = vertex3.y - vertex1.y;
+	vector2[2] = vertex3.z - vertex1.z;
+
+	// Calculate the tu and tv texture space vectors.
+	tuVector[0] = vertex2.tu - vertex1.tu;
+	tvVector[0] = vertex2.tv - vertex1.tv;
+
+	tuVector[1] = vertex3.tu - vertex1.tu;
+	tvVector[1] = vertex3.tv - vertex1.tv;
+
+	// Calculate the denominator of the tangent/binormal equation.
+	den = 1.0f / (tuVector[0] * tvVector[1] - tuVector[1] * tvVector[0]);
+
+	// Calculate the cross products and multiply by the coefficient to get the tangent and binormal.
+	tangent.x = (tvVector[1] * vector1[0] - tvVector[0] * vector2[0]) * den;
+	tangent.y = (tvVector[1] * vector1[1] - tvVector[0] * vector2[1]) * den;
+	tangent.z = (tvVector[1] * vector1[2] - tvVector[0] * vector2[2]) * den;
+
+	binormal.x = (tuVector[0] * vector2[0] - tuVector[1] * vector1[0]) * den;
+	binormal.y = (tuVector[0] * vector2[1] - tuVector[1] * vector1[1]) * den;
+	binormal.z = (tuVector[0] * vector2[2] - tuVector[1] * vector1[2]) * den;
+
+	// Calculate the length of the tangent.
+	length = (float)sqrt((tangent.x * tangent.x) + (tangent.y * tangent.y) + (tangent.z * tangent.z));
+
+	// Normalize the tangent and then store it.
+	tangent.x = tangent.x / length;
+	tangent.y = tangent.y / length;
+	tangent.z = tangent.z / length;
+
+	// Calculate the length of the binormal.
+	length = (float)sqrt((binormal.x * binormal.x) + (binormal.y * binormal.y) + (binormal.z * binormal.z));
+
+	// Normalize the binormal and then store it.
+	binormal.x = binormal.x / length;
+	binormal.y = binormal.y / length;
+	binormal.z = binormal.z / length;
 }
 

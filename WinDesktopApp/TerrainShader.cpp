@@ -7,9 +7,10 @@ bool CTerrainShader::Initialize(ID3D11Device* pDevice, HWND hwnd)
 	return InitializeShader(pDevice, hwnd, L"Shaders/Terrain_VS.hlsl", L"Shaders/Terrain_PS.hlsl");
 }
 
-bool CTerrainShader::Render(ID3D11DeviceContext * pDeviceContext, int nIndexCount, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection, ID3D11ShaderResourceView * pTexture, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor)
+bool CTerrainShader::Render(ID3D11DeviceContext * pDeviceContext, size_t nIndexCount, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection
+	, ID3D11ShaderResourceView* pDiffTexture, ID3D11ShaderResourceView* pNormTexture, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor)
 {
-	if(!SetShaderParameters(pDeviceContext, matrWorld, matrView, matrProjection, pTexture, lightDirection, diffuseColor))
+	if(!SetShaderParameters(pDeviceContext, matrWorld, matrView, matrProjection, pDiffTexture, pNormTexture, lightDirection, diffuseColor))
 		RETURN_AND_LOG(false);
 
 	RenderShader(pDeviceContext, nIndexCount);
@@ -22,7 +23,7 @@ bool CTerrainShader::InitializeShader(ID3D11Device * pDevice, HWND hwnd, const W
 	if(!CompileShaders(pDevice, hwnd, szPathVS, szPathPS, &pVertexShaderBuffer))
 		RETURN_AND_LOG(false);
 
-	D3D11_INPUT_ELEMENT_DESC arrInputLayout[4];
+	D3D11_INPUT_ELEMENT_DESC arrInputLayout[6];
 
 	arrInputLayout[0].SemanticName = "POSITION";
 	arrInputLayout[0].SemanticIndex = 0;
@@ -48,13 +49,29 @@ bool CTerrainShader::InitializeShader(ID3D11Device * pDevice, HWND hwnd, const W
 	arrInputLayout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	arrInputLayout[2].InstanceDataStepRate = 0;
 
-	arrInputLayout[3].SemanticName = "COLOR";
+	arrInputLayout[3].SemanticName = "TANGENT";
 	arrInputLayout[3].SemanticIndex = 0;
 	arrInputLayout[3].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	arrInputLayout[3].InputSlot = 0;
 	arrInputLayout[3].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 	arrInputLayout[3].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	arrInputLayout[3].InstanceDataStepRate = 0;
+
+	arrInputLayout[4].SemanticName = "BINORMAL";
+	arrInputLayout[4].SemanticIndex = 0;
+	arrInputLayout[4].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	arrInputLayout[4].InputSlot = 0;
+	arrInputLayout[4].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	arrInputLayout[4].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	arrInputLayout[4].InstanceDataStepRate = 0;
+
+	arrInputLayout[5].SemanticName = "COLOR";
+	arrInputLayout[5].SemanticIndex = 0;
+	arrInputLayout[5].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	arrInputLayout[5].InputSlot = 0;
+	arrInputLayout[5].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	arrInputLayout[5].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	arrInputLayout[5].InstanceDataStepRate = 0;
 
 	unsigned int nNumElements = sizeof(arrInputLayout) / sizeof(arrInputLayout[0]);
 
@@ -81,10 +98,13 @@ bool CTerrainShader::InitializeShader(ID3D11Device * pDevice, HWND hwnd, const W
 	return true;
 }
 
-bool CTerrainShader::SetShaderParameters(ID3D11DeviceContext * pDeviceContext, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection, ID3D11ShaderResourceView * pTexture, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor)
+bool CTerrainShader::SetShaderParameters(ID3D11DeviceContext * pDeviceContext, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection
+	, ID3D11ShaderResourceView* pDiffTexture, ID3D11ShaderResourceView* pNormTexture, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor)
 {
-	if(!CTextureShader::SetShaderParameters(pDeviceContext, matrWorld, matrView, matrProjection, pTexture))
+	if(!CTextureShader::SetShaderParameters(pDeviceContext, matrWorld, matrView, matrProjection, pDiffTexture))
 		RETURN_AND_LOG(false);
+
+	pDeviceContext->PSSetShaderResources(1, 1, &pNormTexture);
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	ON_FAIL_LOG_AND_RETURN(pDeviceContext->Map(m_pLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
