@@ -56,28 +56,28 @@ void CFont::BuildVertexArray(void * arrVerticies, const char* lpszSentence, floa
 		{
 			// First triangle in quad.
 			arrVerticies_[nIndex].m_position = XMFLOAT3(fDrawX, fDrawY, Settings::g_graphics.fScreenNear);  // Top left.
-			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fLeft, 0.f);
+			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fLeft, 1.f);
 			++nIndex;
 
 			arrVerticies_[nIndex].m_position = XMFLOAT3((fDrawX + m_pFont[nLetter].m_nSize), (fDrawY - m_fFontHeight), Settings::g_graphics.fScreenNear);  // Bottom m_fRight.
-			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fRight, 1.0f);
+			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fRight, 0.0f);
 			++nIndex;
 
 			arrVerticies_[nIndex].m_position = XMFLOAT3(fDrawX, (fDrawY - m_fFontHeight), Settings::g_graphics.fScreenNear);  // Bottom m_fLeft.
-			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fLeft, 1.0f);
+			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fLeft, 0.0f);
 			++nIndex;
 
 			// Second triangle in quad.
 			arrVerticies_[nIndex].m_position = XMFLOAT3(fDrawX, fDrawY, Settings::g_graphics.fScreenNear);  // Top m_fLeft.
-			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fLeft, 0.0f);
+			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fLeft, 1.0f);
 			++nIndex;
 
 			arrVerticies_[nIndex].m_position = XMFLOAT3(fDrawX + m_pFont[nLetter].m_nSize, fDrawY, Settings::g_graphics.fScreenNear);  // Top m_fRight.
-			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fRight, 0.0f);
+			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fRight, 1.0f);
 			++nIndex;
 
 			arrVerticies_[nIndex].m_position = XMFLOAT3((fDrawX + m_pFont[nLetter].m_nSize), (fDrawY - m_fFontHeight), Settings::g_graphics.fScreenNear);  // Bottom m_fRight.
-			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fRight, 1.0f);
+			arrVerticies_[nIndex].m_textureCoord = XMFLOAT2(m_pFont[nLetter].m_fRight, 0.0f);
 			++nIndex;
 
 			fDrawX += m_pFont[nLetter].m_nSize + 1.f;

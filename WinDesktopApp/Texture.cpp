@@ -129,21 +129,17 @@ bool CTexture::LoadTagra(const char* pszFilePath, int& nHeight, int& nWidth)
 	m_pRawData = new unsigned char[nImageSize];
 
 	int index{0};
-	int k = nImageSize - (nWidth * 4);
+	int k{0};
 
-	for (int j = 0; j < nHeight; j++)
+	for(int i = 0; i < nWidth * nHeight; ++i)
 	{
-		for (int i = 0; i < nWidth; i++)
-		{
-			m_pRawData[index + 0] = imageData[k + 2];	//r
-			m_pRawData[index + 1] = imageData[k + 1];	//g
-			m_pRawData[index + 2] = imageData[k + 0];	//b
-			m_pRawData[index + 3] = imageData[k + 3];	//a
+		m_pRawData[index + 0] = imageData[k + 2];	//r
+		m_pRawData[index + 1] = imageData[k + 1];	//g
+		m_pRawData[index + 2] = imageData[k + 0];	//b
+		m_pRawData[index + 3] = imageData[k + 3];	//a
 
-			k += 4;
-			index += 4;
-		}
-		k -= nWidth * 8;
+		k += 4;
+		index += 4;
 	}
 	
 	delete[] imageData;
