@@ -28,7 +28,7 @@ bool Graphics::Initialize(int nScreenWidth, int nScreenHeight, HWND hwnd)
 
 	m_pModel = new Model();
 
-	if(!m_pModel->Initialize(m_pDirect3D->GetDevice(), m_pDirect3D->GetDeviceContext(), {0, 0, 0}, false, "Res/Wall.tga"))
+	if(!m_pModel->Initialize(m_pDirect3D->GetDevice(), m_pDirect3D->GetDeviceContext(), {0, 0, 0}, Model::VertexDataType::TEXTURE, "Res/Wall.tga"))
 	{
 		Debug::LogNow("Graphics::Initialize: Could not initialize model!");
 		return false;

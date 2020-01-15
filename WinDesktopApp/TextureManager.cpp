@@ -44,10 +44,21 @@ bool CTextureManager::LoadTexture(ID3D11Device * pDevice, ID3D11DeviceContext * 
 	return true;
 }
 
-ID3D11ShaderResourceView * CTextureManager::GetTexture(int nIndex)
+ID3D11ShaderResourceView* CTextureManager::GetTexture(size_t nIndex) const
 {
 	if(nIndex >= m_nTexturesCount)
 		RETURN_AND_LOG(nullptr);
 
 	return m_arrTextures[nIndex].GetTexture();
+}
+
+ID3D11ShaderResourceView* CTextureManager::GetTexture(TextureIndex eIndex) const
+{
+	if(eIndex == TextureIndex::UNDEFINED)
+	{
+		QUIK_LOG_ML(2, "CTextureManager::GetTexture: UNDEFINED texture requested.");
+		return nullptr;
+	}
+
+	return GetTexture(static_cast<size_t>(eIndex));
 }

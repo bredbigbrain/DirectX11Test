@@ -25,7 +25,20 @@ private:
 	bool Render(D3D* pDirect3D, CShaderManager* pShManager, CTextureManager* pTexManager);
 
 private:
-	std::map<CShaderManager::EShader, std::vector<std::pair<Model*, size_t>>> m_mapModels;  //<Shader ,<Model, textureIndex>>
+	class CRenderableModel
+	{
+	public:
+		CRenderableModel() = default;
+		CRenderableModel(Model* pModel, CTextureManager::TextureIndex eDiffIndex
+			, CTextureManager::TextureIndex eNormIndex = CTextureManager::TextureIndex::UNDEFINED)
+			: m_eDiffuseTextureIndex(eDiffIndex), m_eNormTextureIndex(eNormIndex), m_pModel(pModel)
+		{}
+
+		CTextureManager::TextureIndex m_eDiffuseTextureIndex = CTextureManager::TextureIndex::UNDEFINED;
+		CTextureManager::TextureIndex m_eNormTextureIndex = CTextureManager::TextureIndex::UNDEFINED;
+		Model* m_pModel = nullptr;
+	};
+	std::map<CShaderManager::EShader, std::vector<CRenderableModel>> m_mapModels;  //<Shader ,<Model, textureIndex>>
 
 	CUserInterface* m_pUserInterface{nullptr};
 	CCamera* m_pCamera{nullptr};

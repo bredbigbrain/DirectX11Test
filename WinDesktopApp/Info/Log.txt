@@ -1,2 +1,2 @@
-21:06:01: CSettings::Save: Settings file path is empty!
-21:06:01: CSettings::Shutdown: saving failed!
+22:33:33: CSettings::Save: Settings file path is empty!
+22:33:33: CSettings::Shutdown: saving failed!

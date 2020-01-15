@@ -20,7 +20,7 @@ public:
 
 	enum TextureIndex
 	{
-		testTga, dirt01d, whiteDiffBmp, dirtDiffBmp, dirtNormBmp, ArrowBmp, ArrowTga
+		UNDEFINED = -1, testTga, dirt01d, whiteDiffBmp, dirtDiffBmp, dirtNormBmp, ArrowBmp, ArrowTga
 	};
 
 	bool Initialize(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);
@@ -28,7 +28,8 @@ public:
 	void Shutdown();
 
 	bool LoadTexture(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const char* lpszTexturePath, size_t nIndex);
-	ID3D11ShaderResourceView* GetTexture(int nIndex);
+	ID3D11ShaderResourceView* GetTexture(size_t nIndex) const;
+	ID3D11ShaderResourceView* GetTexture(TextureIndex eIndex) const;
 
 private:
 	CTexture* m_arrTextures{nullptr};

@@ -23,6 +23,7 @@ constexpr const char* file_name(const char* str) {
 #define QUIK_LOG() {Debug::LogNow("[QUIK LOG]: file: %s, line: %d", __FILENAME__, __LINE__);}
 #define QUIK_LOG_T(TAG) {Debug::LogNow("[%s]: file: %s, line: %d", TAG, __FILENAME__, __LINE__);}
 #define QUIK_LOG_M(MESSAGE) {Debug::LogNow("[QUIK LOG]: %s file: %s, line: %d", MESSAGE, __FILENAME__, __LINE__);}
+#define QUIK_LOG_ML(MESSAGE, nLevel) {Debug::LogNow(nLevel,"[QUIK LOG]: %s file: %s, line: %d", MESSAGE, __FILENAME__, __LINE__);}
 #define QUIK_LOG_TM(TAG, MESSAGE) {Debug::LogNow("[%s]: %s file: %s, line: %d", TAG, MESSAGE, __FILENAME__, __LINE__);}
 
 #define RETURN_AND_LOG(result) { QUIK_LOG(); return result;}

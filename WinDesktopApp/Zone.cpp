@@ -33,12 +33,14 @@ bool CZone::Initialize(D3D* pDirect3D, HWND hWnd, int nScreenWidht, int nScreenH
 		using namespace Math3DNS;
 
 		auto pModel = new Model();
-		pModel->Initialize(pDirect3D->GetDevice(), pDirect3D->GetDeviceContext(), m_pCamera->GetPosition() + XMFLOAT3(2, -5, 7), false);
-		m_mapModels[CShaderManager::EShader::TEXTURE].push_back({pModel, CTextureManager::TextureIndex::ArrowBmp});
+		pModel->Initialize(pDirect3D->GetDevice(), pDirect3D->GetDeviceContext(), Model::VertexDataType::TEXTURE_NBCm
+			, Model::SInitOptionalParams(m_pCamera->GetPosition() + XMFLOAT3(0, -5, 7), XMFLOAT3(2, 2, 2)));
+		m_mapModels[CShaderManager::EShader::TERRAIN].push_back(CRenderableModel(pModel, CTextureManager::TextureIndex::dirtDiffBmp, CTextureManager::TextureIndex::dirtNormBmp));
 
 		pModel = new Model();
-		pModel->Initialize(pDirect3D->GetDevice(), pDirect3D->GetDeviceContext(), m_pCamera->GetPosition() + XMFLOAT3(-2, -5, 7), true);
-		m_mapModels[CShaderManager::EShader::LIGTH].push_back({pModel, CTextureManager::TextureIndex::ArrowTga});
+		pModel->Initialize(pDirect3D->GetDevice(), pDirect3D->GetDeviceContext(), Model::VertexDataType::TEXTURE_NBCm
+			, Model::SInitOptionalParams(m_pCamera->GetPosition() + XMFLOAT3(-2, -5, 7)));
+		m_mapModels[CShaderManager::EShader::LIGTH].push_back(CRenderableModel(pModel, CTextureManager::TextureIndex::dirtDiffBmp));
 	}
 
 	m_bDisplayUI = true;
@@ -57,8 +59,8 @@ void CZone::Shutdown()
 
 	for(auto& pair : m_mapModels)
 	{
-		for(auto model : pair.second)
-			SHUTDOWN_DELETE(model.first);
+		for(auto& model : pair.second)
+			SHUTDOWN_DELETE(model.m_pModel);
 	}
 	m_mapModels.clear();
 }
@@ -139,17 +141,26 @@ bool CZone::Render(D3D* pDirect3D, CShaderManager* pShManager, CTextureManager* 
 		case CShaderManager::EShader::TEXTURE:
 			for(auto& model : pair.second)
 			{
-				model.first->Render(pDirect3D->GetDeviceContext());
-				pShManager->RenderTextureShader(pDirect3D->GetDeviceContext(), model.first->GetIndexCount(), matrWorld, matrView, matrProjection
-					, pTexManager->GetTexture(model.second));
+				model.m_pModel->Render(pDirect3D->GetDeviceContext());
+				pShManager->RenderTextureShader(pDirect3D->GetDeviceContext(), model.m_pModel->GetIndexCount(), matrWorld, matrView, matrProjection
+					, pTexManager->GetTexture(model.m_eDiffuseTextureIndex));
 			}
 			break;
 		case CShaderManager::EShader::LIGTH:
 			for(auto& model : pair.second)
 			{
-				model.first->Render(pDirect3D->GetDeviceContext());
-				pShManager->RenderLightShader(pDirect3D->GetDeviceContext(), model.first->GetIndexCount(), matrWorld, matrView, matrProjection
-					, pTexManager->GetTexture(model.second), m_pLightSource->GetDirection(), m_pLightSource->GetDiffuseColor());
+				model.m_pModel->Render(pDirect3D->GetDeviceContext());
+				pShManager->RenderLightShader(pDirect3D->GetDeviceContext(), model.m_pModel->GetIndexCount(), matrWorld, matrView, matrProjection
+					, pTexManager->GetTexture(model.m_eDiffuseTextureIndex), m_pLightSource->GetDirection(), m_pLightSource->GetDiffuseColor());
+			}
+			break;
+		case CShaderManager::EShader::TERRAIN:
+			for(auto& model : pair.second)
+			{
+				model.m_pModel->Render(pDirect3D->GetDeviceContext());
+				pShManager->RenderTerrainShader(pDirect3D->GetDeviceContext(), model.m_pModel->GetIndexCount(), matrWorld, matrView, matrProjection
+					, pTexManager->GetTexture(model.m_eDiffuseTextureIndex), pTexManager->GetTexture(model.m_eNormTextureIndex)
+					, m_pLightSource->GetDirection(), m_pLightSource->GetDiffuseColor());
 			}
 			break;
 		case CShaderManager::EShader::COLOR:
