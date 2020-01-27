@@ -13,8 +13,7 @@
 class System
 {
 public:
-	System();
-	~System();
+	System() = default;
 
 	bool Initialize();
 	void Shutdown();
@@ -29,9 +28,9 @@ private:
 
 private:
 	Settings::CSettings settings;
-	LPCWSTR m_szApplicationName;
-	HINSTANCE m_hinstance;
-	HWND m_hwnd;
+	LPCWSTR m_szApplicationName{nullptr};
+	HINSTANCE m_hinstance = NULL;
+	HWND m_hwnd = NULL;
 
 	CShaderManager* m_pShManager{nullptr};
 	CTextureManager* m_pTexManager{nullptr};

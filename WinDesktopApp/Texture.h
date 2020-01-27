@@ -22,7 +22,7 @@ public:
 	bool Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, const char* szFileName);
 	void Shutdown();
 
-	enum TextureType { UNDEF, BMP, TGA, };
+	enum class TextureType { UNDEF, BMP, TGA, };
 	static TextureType DetermineTextureType(const char* szFileName);
 
 	ID3D11ShaderResourceView* GetTexture();

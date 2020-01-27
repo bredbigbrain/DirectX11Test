@@ -4,14 +4,7 @@
 #include "Debug.h"
 #include "Defines.h"
 
-System::System()
-{
-}
 
-
-System::~System() {}
-
- 
 bool System::Initialize()
 {
 	int nScreenHeight{0}, nScreenWidth{0};

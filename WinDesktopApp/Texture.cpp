@@ -97,8 +97,8 @@ ID3D11ShaderResourceView* CTexture::GetTexture()
 
 bool CTexture::LoadTagra(const char* pszFilePath, int& nHeight, int& nWidth)
 {
-	FILE* pFile;
-	if (fopen_s(&pFile, pszFilePath, "rb") != 0)
+	FILE* pFile = nullptr;
+	if (fopen_s(&pFile, pszFilePath, "rb") != 0 || !pFile)
 		RETURN_AND_LOG(false);
 
 	TagraHeader_t tagraFileHeader;
@@ -118,7 +118,7 @@ bool CTexture::LoadTagra(const char* pszFilePath, int& nHeight, int& nWidth)
 
 	nCount = fread(imageData, 1, nImageSize, pFile);
 
-	if (fclose(pFile) != 0 || nCount != nImageSize)
+	if(fclose(pFile) != 0 || nCount != nImageSize)
 		RETURN_AND_LOG(false);
 
 	if(m_pRawData)
@@ -148,8 +148,8 @@ bool CTexture::LoadTagra(const char* pszFilePath, int& nHeight, int& nWidth)
 
 bool CTexture::LoadBMP(const char* pszFilePath, int& nHeight, int& nWidth)
 {
-	FILE* pFile;
-	if(fopen_s(&pFile, pszFilePath, "rb") != 0)
+	FILE* pFile = nullptr;
+	if(fopen_s(&pFile, pszFilePath, "rb") != 0 || pFile == nullptr)
 		RETURN_AND_LOG(false);
 
 	BITMAPFILEHEADER bmpHeader;
@@ -163,7 +163,11 @@ bool CTexture::LoadBMP(const char* pszFilePath, int& nHeight, int& nWidth)
 	nHeight = bmpInfo.biHeight;
 	nWidth = bmpInfo.biWidth;
 
-	size_t nImageSize = nHeight * (nWidth * 3 + ((nWidth % 2) == 0 ? 0 : 1));
+	bool bSizeMultipleByFour = nWidth % 4 == 0;
+	size_t nImageSize = (size_t)nHeight * nWidth * 3;
+	if(!bSizeMultipleByFour)
+		nImageSize += nHeight;
+
 	unsigned char* arrBitMap = new unsigned char[nImageSize];
 
 	fseek(pFile, bmpHeader.bfOffBits, SEEK_SET);
@@ -179,7 +183,7 @@ bool CTexture::LoadBMP(const char* pszFilePath, int& nHeight, int& nWidth)
 		Debug::LogNow(2, "CTexture::LoadBMP WARNIG: Overriding texture (%s)", pszFilePath);
 		delete[] m_pRawData;
 	}
-	m_pRawData = new unsigned char[nWidth * nHeight * 4];
+	m_pRawData = new unsigned char[(size_t)nWidth * nHeight * 4];
 
 	size_t k = 0, nIndex = 0;
 	for(size_t j = 0; j < nHeight; ++j)
@@ -193,7 +197,8 @@ bool CTexture::LoadBMP(const char* pszFilePath, int& nHeight, int& nWidth)
 			k += 3;
 			nIndex += 4;
 		}
-		++k;
+		if(!bSizeMultipleByFour)
+			++k;
 	}
 	
 	delete[] arrBitMap;

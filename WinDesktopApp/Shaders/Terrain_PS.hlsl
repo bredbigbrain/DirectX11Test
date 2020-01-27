@@ -25,11 +25,9 @@ float4 psMain(SPixelInput input) : SV_TARGET
 {
 	float4 texColor = mainTex.Sample(mainSampler, input.uvMain);
 	texColor = saturate(texColor * input.color * 2);
-	//texColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	float4 texNormal = normalTex.Sample(mainSampler, input.uvMain);
-	texNormal = (texNormal * 2.0f) - 1.0f;
-	//texNormal = normalize((texNormal * 2.0f) - 1.0f);
+	texNormal = normalize((texNormal * 2.0f) - 1.0f);
 
 	float3 bumpNormal = (texNormal.x * input.tangent) + (texNormal.y * input.binormal) + (texNormal.z * input.normal);
 	bumpNormal = normalize(bumpNormal);

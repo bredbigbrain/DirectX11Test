@@ -16,11 +16,15 @@ public:
 		"Res/dirtNorm.bmp",
 		"Res/Arrow.bmp",
 		"Res/Arrow.tga",
+		"Res/GroundForestDiff.bmp",
+		"Res/GroundForestNorm.bmp",
+		"Res/GroundForestDiffTest.bmp",
 	};
 
-	enum TextureIndex
+	enum class TextureIndex
 	{
-		UNDEFINED = -1, testTga, dirt01d, whiteDiffBmp, dirtDiffBmp, dirtNormBmp, ArrowBmp, ArrowTga
+		UNDEFINED = -1, testTga, dirt01d, whiteDiffBmp, dirtDiffBmp, dirtNormBmp, ArrowBmp, ArrowTga, GroundForestDiff, GroundForestNorm
+		, GroundForestDiffTest
 	};
 
 	bool Initialize(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceContext);

@@ -15,7 +15,13 @@ namespace Math3DNS
 	extern inline float RadiansToDegrees(float fRadians);
 
 	DirectX::XMFLOAT3 operator+ (const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs);
+	DirectX::XMFLOAT3 operator- (const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs);
 	DirectX::XMFLOAT3 operator* (const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs);
+	DirectX::XMFLOAT3 operator* (const DirectX::XMFLOAT3& lhs, float fVal);
+	bool operator== (const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs);
+	bool operator!= (const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs);
+
+	DirectX::XMFLOAT3 ToXMFLOAT3(const DirectX::XMVECTOR& vector);
 
 	namespace Radians
 	{

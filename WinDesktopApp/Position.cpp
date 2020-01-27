@@ -4,6 +4,7 @@
 
 float m_fMaxMoveSpeed = 1.f;
 float m_fMaxTurnSpeed = 0.1f;
+float m_fAcceleration = 0.001f;
 
 CPosition::CPosition(const XMFLOAT3& position, const XMFLOAT3& rotation)
 	: m_fPositionX(position.x), m_fPositionY(position.y), m_fPositionZ(position.z)
@@ -19,6 +20,13 @@ void CPosition::SetPosition(const CPosition* pPosition)
 	pPosition->GetPosition(m_fPositionX, m_fPositionY, m_fPositionZ);
 }
 
+void CPosition::SetPosition(const XMFLOAT3& position)
+{
+	m_fPositionX = position.x;
+	m_fPositionY = position.y;
+	m_fPositionZ = position.z;
+}
+
 void CPosition::SetRotation(float fX, float fY, float fZ)
 {
 	m_fRotationX = fX; m_fRotationY = fY; m_fRotationZ = fZ;
@@ -26,6 +34,13 @@ void CPosition::SetRotation(float fX, float fY, float fZ)
 void CPosition::SetRotation(const CPosition* pPosition)
 {
 	pPosition->GetRotation(m_fRotationX, m_fRotationY, m_fRotationZ);
+}
+
+void CPosition::SetRotation(const XMFLOAT3& rotation)
+{
+	m_fRotationX = rotation.x;
+	m_fRotationY = rotation.y;
+	m_fRotationZ = rotation.z;
 }
 
 void CPosition::GetPosition(float& fX, float& fY, float& fZ) const
@@ -69,6 +84,11 @@ XMVECTOR CPosition::GetForwardVector() const
 	return XMVectorAdd(positionVector, lookAtVector);
 }
 
+XMVECTOR CPosition::GetForwardVectorLocal() const
+{
+	return XMVector3TransformCoord(XMLoadFloat3(&Math3DNS::F3_FORWARD), GetRotationMatrix());
+}
+
 XMVECTOR CPosition::GetForwardVector(XMMATRIX matrRotation) const
 {
 	XMVECTOR lookAtVector = XMLoadFloat3(&Math3DNS::F3_FORWARD);
@@ -100,7 +120,7 @@ void CPosition::MoveForward(bool bKeyDown)
 {
 	if(bKeyDown)
 	{
-		m_fForwardSpeed += m_fFrameTime * 0.001f;
+		m_fForwardSpeed += m_fFrameTime * m_fAcceleration;
 		if(m_fForwardSpeed > m_fMaxMoveSpeed)
 			m_fForwardSpeed = m_fMaxMoveSpeed;
 	}
@@ -123,7 +143,7 @@ void CPosition::MoveBackward(bool bKeyDown)
 {
 	if(bKeyDown)
 	{
-		m_fBackwardSpeed += m_fFrameTime * 0.001f;
+		m_fBackwardSpeed += m_fFrameTime * m_fAcceleration;
 		if(m_fBackwardSpeed > m_fMaxMoveSpeed)
 			m_fBackwardSpeed = m_fMaxMoveSpeed;
 	}
@@ -146,7 +166,7 @@ void CPosition::MoveUpward(bool bKeyDown)
 {
 	if(bKeyDown)
 	{
-		m_fUpwardSpeed += m_fFrameTime * 1.f;
+		m_fUpwardSpeed += m_fFrameTime * m_fAcceleration;
 		if(m_fUpwardSpeed > m_fMaxMoveSpeed / 30.f)
 			m_fUpwardSpeed = m_fMaxMoveSpeed / 30.f;
 	}
@@ -164,7 +184,7 @@ void CPosition::MoveDownward(bool bKeyDown)
 {
 	if(bKeyDown)
 	{
-		m_fDownwardSpeed += m_fFrameTime * 1.f;
+		m_fDownwardSpeed += m_fFrameTime * m_fAcceleration;
 		if(m_fDownwardSpeed > m_fMaxMoveSpeed / 30.f)
 			m_fDownwardSpeed = m_fMaxMoveSpeed / 30.f;
 	}

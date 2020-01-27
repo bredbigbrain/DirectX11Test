@@ -181,8 +181,8 @@ bool CTerrain::LoadBitmapHeightMap()
 {
 	m_arrHeightMap = new SHeightMap[m_nTerrainWidth * m_nTerrainHeight];
 
-	FILE* pFile;
-	if(fopen_s(&pFile, m_lpszTerrainFileName, "rb") != 0)
+	FILE* pFile = nullptr;
+	if(fopen_s(&pFile, m_lpszTerrainFileName, "rb") != 0 || !pFile)
 		RETURN_AND_LOG(false);
 
 	BITMAPFILEHEADER bmpHeader;
@@ -199,7 +199,7 @@ bool CTerrain::LoadBitmapHeightMap()
 		return false;
 	}
 
-	size_t nImageSize = m_nTerrainHeight * (m_nTerrainWidth * 3 + 1);
+	size_t nImageSize = m_nTerrainHeight * ((size_t)m_nTerrainWidth * 3 + 1);
 	auto arrBitMap = new unsigned char[nImageSize];
 
 	fseek(pFile, bmpHeader.bfOffBits, SEEK_SET);
@@ -215,7 +215,7 @@ bool CTerrain::LoadBitmapHeightMap()
 	{
 		for(size_t i = 0; i < m_nTerrainWidth; i++)
 		{
-			nIndex = m_nTerrainWidth * (m_nTerrainHeight - 1 - j) + i;
+			nIndex = m_nTerrainWidth * ((size_t)m_nTerrainHeight - 1 - j) + i;
 			m_arrHeightMap[nIndex].y = static_cast<float>(arrBitMap[k]);
 			k += 3;
 		}
@@ -229,8 +229,8 @@ bool CTerrain::LoadBitmapHeightMap()
 
 bool CTerrain::LoadColorMap()
 {
-	FILE* pFile;
-	if(fopen_s(&pFile, m_lpszColorMapFileName, "rb") != 0)
+	FILE* pFile = nullptr;
+	if(fopen_s(&pFile, m_lpszColorMapFileName, "rb") != 0 || !pFile)
 		RETURN_AND_LOG(false);
 
 	BITMAPFILEHEADER bmpHeader;
@@ -247,7 +247,7 @@ bool CTerrain::LoadColorMap()
 		return false;
 	}
 
-	size_t nImageSize = m_nTerrainHeight * (m_nTerrainWidth * 3 + 1);
+	size_t nImageSize = m_nTerrainHeight * ((size_t)m_nTerrainWidth * 3 + 1);
 	auto arrBitMap = new unsigned char[nImageSize];
 
 	fseek(pFile, bmpHeader.bfOffBits, SEEK_SET);
@@ -263,7 +263,7 @@ bool CTerrain::LoadColorMap()
 	{
 		for(size_t i = 0; i < m_nTerrainWidth; ++i)
 		{
-			nIndex = m_nTerrainWidth * (m_nTerrainHeight - 1 - j) + i;
+			nIndex = m_nTerrainWidth * ((size_t)m_nTerrainHeight - 1 - j) + i;
 			m_arrHeightMap[nIndex].b = static_cast<float>(arrBitMap[k]) / 255.f;
 			m_arrHeightMap[nIndex].g = static_cast<float>(arrBitMap[k + 1]) / 255.f;
 			m_arrHeightMap[nIndex].r = static_cast<float>(arrBitMap[k + 2]) / 255.f;
@@ -341,7 +341,7 @@ bool CTerrain::CalculateNormals()
 	int i, j, index1, index2, index3, index;
 	float vertex1[3], vertex2[3], vertex3[3], vector1[3], vector2[3], sum[3], length;
 	// Create a temporary array to hold the face normal vectors.
-	XMFLOAT3* normals = new XMFLOAT3[(m_nTerrainHeight - 1) * (m_nTerrainWidth - 1)];
+	XMFLOAT3* normals = new XMFLOAT3[((size_t)m_nTerrainHeight - 1) * (m_nTerrainWidth - 1)];
 
 	// Go through all the faces in the mesh and calculate their normals.
 	for(j = 0; j < (m_nTerrainHeight - 1); j++)
@@ -486,7 +486,8 @@ void CTerrain::CalculateTerrainVectors()
 	}
 }
 
-void CTerrain::CalculateTangetnBinormal(STempVertex vertex1, STempVertex vertex2, STempVertex vertex3, SVector& tangent, SVector& binormal)
+void CTerrain::CalculateTangetnBinormal(const STempVertex& vertex1, const STempVertex& vertex2, const STempVertex& vertex3
+	, SVector& tangent, SVector& binormal)
 {
 	float vector1[3], vector2[3];
 	float tuVector[2], tvVector[2];

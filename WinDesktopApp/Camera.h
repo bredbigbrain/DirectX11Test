@@ -27,6 +27,6 @@ public:
 
 protected:
 	CPosition m_position;
-	XMMATRIX m_matrView, m_matrBaseView;
+	XMMATRIX m_matrView{}, m_matrBaseView{};
 };
 

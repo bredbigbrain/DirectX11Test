@@ -12,9 +12,11 @@ public:
 
 	void SetPosition(float fX, float fY, float fZ);
 	void SetPosition(const CPosition* pPosition);
+	void SetPosition(const XMFLOAT3& position);
 
 	void SetRotation(float fX, float fY, float fZ);
 	void SetRotation(const CPosition* pPosition);
+	void SetRotation(const XMFLOAT3& rotation);
 
 	void GetPosition(float& fX, float& fY, float& fZ) const;
 	void GetRotation(float& fX, float& fY, float& fZ) const;
@@ -29,6 +31,7 @@ public:
 	XMMATRIX GetRotationMatrix() const;
 	
 	XMVECTOR GetForwardVector() const;
+	XMVECTOR GetForwardVectorLocal() const;
 	XMVECTOR GetForwardVector(XMMATRIX matrRotation) const;
 
 	XMVECTOR GetUpVector() const;
@@ -45,7 +48,7 @@ public:
 
 private:
 	float m_fPositionX = 0.f, m_fPositionY = 0.f, m_fPositionZ = 0.f;
-	float m_fRotationX = 0.f, m_fRotationY = 0.f, m_fRotationZ = 0.f;
+	float m_fRotationX = 0.f, m_fRotationY = 0.f, m_fRotationZ = 0.f; //Degrees
 
 	float m_fFrameTime = 0.f;
 

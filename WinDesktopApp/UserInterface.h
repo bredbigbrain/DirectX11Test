@@ -23,7 +23,7 @@ private:
 	CText* m_pFpsString{nullptr};
 	CText* m_pPositionString{nullptr};
 	CText* m_pVideoString{nullptr};
-	XMFLOAT3 m_prevPosition, m_prevRotation;
+	XMFLOAT3 m_prevPosition{}, m_prevRotation{};
 	int m_nPrevFps{0};
 };
 

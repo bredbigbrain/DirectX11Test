@@ -13,15 +13,43 @@ namespace Math3DNS
 	inline float DegreesToRadians(float fDegrees) { return fDegrees * RADIANS_PER_DEGREE_f; }
 	inline float RadiansToDegrees(float fRadians) { return fRadians / RADIANS_PER_DEGREE_f; }
 
-	DirectX::XMFLOAT3 operator+(const DirectX::XMFLOAT3 & lhs, const DirectX::XMFLOAT3 & rhs)
+	DirectX::XMFLOAT3 operator+(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs)
 	{
 		return DirectX::XMFLOAT3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
 	}
 
-	DirectX::XMFLOAT3 operator*(const DirectX::XMFLOAT3 & lhs, const DirectX::XMFLOAT3 & rhs)
+	DirectX::XMFLOAT3 operator-(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs)
+	{
+		return DirectX::XMFLOAT3(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
+	}
+
+	DirectX::XMFLOAT3 operator*(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs)
 	{
 		return DirectX::XMFLOAT3(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z);
 	}
+
+	DirectX::XMFLOAT3 operator* (const DirectX::XMFLOAT3& lhs, float fVal)
+	{
+		return DirectX::XMFLOAT3(lhs.x * fVal, lhs.y * fVal, lhs.z * fVal);
+	}
+	
+	bool operator==(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs)
+	{
+		return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
+	}
+
+	bool operator!=(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs)
+	{
+		return lhs.x != rhs.x || lhs.y != rhs.y != lhs.z * rhs.z;
+	}
+
+	DirectX::XMFLOAT3 ToXMFLOAT3(const DirectX::XMVECTOR& vector)
+	{
+		DirectX::XMFLOAT3 tmp;
+		DirectX::XMStoreFloat3(&tmp, vector);
+		return tmp;
+	}
+
 
 	namespace Radians
 	{

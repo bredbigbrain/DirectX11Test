@@ -69,7 +69,7 @@ bool Graphics::Render()
 	m_pDirect3D->GetProjectionMatrix(matrProjection);
 	XMMATRIX matrView = m_pCamera->GetViewMatrix();
 
-	m_pModel->Render(m_pDirect3D->GetDeviceContext());
+	m_pModel->Render(m_pDirect3D->GetDevice(), m_pDirect3D->GetDeviceContext());
 	if (!m_pTextureShader->Render(m_pDirect3D->GetDeviceContext(), m_pModel->GetIndexCount()
 		, matrWorld, matrView, matrProjection, m_pModel->GetTexture()))
 		RETURN_AND_LOG(false);
