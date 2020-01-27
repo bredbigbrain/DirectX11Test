@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "D3D.h"
-#include "Defines.h"
+#include "HelperFunctions.h"
 
 D3D::D3D()
 {
@@ -273,20 +273,20 @@ void D3D::Shutdown()
 	if (m_pSwapChain)
 		m_pSwapChain->SetFullscreenState(false, NULL);
 
-	RELEASE_AND_NULL(m_pAlphaEnableBlendingState2);
-	RELEASE_AND_NULL(m_pAlphaDisableBlendingState);
-	RELEASE_AND_NULL(m_pAlphaEnableBlendingState);
-	RELEASE_AND_NULL(m_pRasterState);
-	RELEASE_AND_NULL(m_pRasterStateNoCulling);
-	RELEASE_AND_NULL(m_pRasterStateWireframe);
-	RELEASE_AND_NULL(m_pDepthStencilView);
-	RELEASE_AND_NULL(m_pDepthStencilState);
-	RELEASE_AND_NULL(m_pDepthDisabledStencilState);
-	RELEASE_AND_NULL(m_pDepthStencilBuffer);
-	RELEASE_AND_NULL(m_pRenderTargetView);
-	RELEASE_AND_NULL(m_pDeviceContext);
-	RELEASE_AND_NULL(m_pDevice);
-	RELEASE_AND_NULL(m_pSwapChain);
+	SafeReleaseAndNull(m_pAlphaEnableBlendingState2);
+	SafeReleaseAndNull(m_pAlphaDisableBlendingState);
+	SafeReleaseAndNull(m_pAlphaEnableBlendingState);
+	SafeReleaseAndNull(m_pRasterState);
+	SafeReleaseAndNull(m_pRasterStateNoCulling);
+	SafeReleaseAndNull(m_pRasterStateWireframe);
+	SafeReleaseAndNull(m_pDepthStencilView);
+	SafeReleaseAndNull(m_pDepthStencilState);
+	SafeReleaseAndNull(m_pDepthDisabledStencilState);
+	SafeReleaseAndNull(m_pDepthStencilBuffer);
+	SafeReleaseAndNull(m_pRenderTargetView);
+	SafeReleaseAndNull(m_pDeviceContext);
+	SafeReleaseAndNull(m_pDevice);
+	SafeReleaseAndNull(m_pSwapChain);
 }
 
 void D3D::BeginScene(const XMVECTORF32& color)

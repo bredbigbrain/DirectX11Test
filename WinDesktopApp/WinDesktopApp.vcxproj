@@ -203,7 +203,7 @@
     <ClInclude Include="BMP_Image.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ColorShader.h" />
-    <ClInclude Include="Defines.h" />
+    <ClInclude Include="HelperFunctions.h" />
     <ClInclude Include="FontShader.h" />
     <ClInclude Include="LightShader.h" />
     <ClInclude Include="LightSource.h" />

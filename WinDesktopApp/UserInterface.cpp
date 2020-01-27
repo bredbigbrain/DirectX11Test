@@ -1,7 +1,7 @@
 #include "UserInterface.h"
 #include "Globals.h"
 #include "Debug.h"
-#include "Defines.h"
+#include "HelperFunctions.h"
 #include <sstream>
 
 
@@ -57,10 +57,10 @@ bool CUserInterface::Initialize(D3D* pDirect3D, int nScreenHeight, int nScreenWi
 
 void CUserInterface::Shutdown()
 {
-	SHUTDOWN_DELETE(m_pPositionString);
-	SHUTDOWN_DELETE(m_pVideoString);
-	SHUTDOWN_DELETE(m_pFpsString);
-	SHUTDOWN_DELETE(m_pFont);
+	SafeShutdounAndDelete(m_pPositionString);
+	SafeShutdounAndDelete(m_pVideoString);
+	SafeShutdounAndDelete(m_pFpsString);
+	SafeShutdounAndDelete(m_pFont);
 }
 
 bool CUserInterface::Frame(ID3D11DeviceContext * pDeviceContext, int nFPS, XMFLOAT3 position, XMFLOAT3 rotation)

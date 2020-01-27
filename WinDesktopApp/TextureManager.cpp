@@ -1,5 +1,5 @@
 #include "TextureManager.h"
-#include "Defines.h"
+#include "HelperFunctions.h"
 #include "Debug.h"
 
 bool CTextureManager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
@@ -29,7 +29,7 @@ void CTextureManager::Shutdown()
 	{
 		for(size_t i = 0; i < m_nTexturesCount; i++)
 			m_arrTextures[i].Shutdown();
-		DELETE_ARR(m_arrTextures);
+		SafeDeleteArray(m_arrTextures);
 	}
 }
 

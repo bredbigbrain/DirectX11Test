@@ -1,6 +1,6 @@
 #include "Graphics.h"
 #include "Globals.h"
-#include "Defines.h"
+#include "HelperFunctions.h"
 
 Graphics::Graphics()
 {
@@ -47,10 +47,10 @@ bool Graphics::Initialize(int nScreenWidth, int nScreenHeight, HWND hwnd)
 
 void Graphics::Shutdown()
 {
-	SHUTDOWN_DELETE(m_pTextureShader);
-	SHUTDOWN_DELETE(m_pModel);
-	DELETE(m_pCamera);
-	SHUTDOWN_DELETE(m_pDirect3D);
+	SafeShutdounAndDelete(m_pTextureShader);
+	SafeShutdounAndDelete(m_pModel);
+	SafeDelete(m_pCamera);
+	SafeShutdounAndDelete(m_pDirect3D);
 }
 
 bool Graphics::Frame()

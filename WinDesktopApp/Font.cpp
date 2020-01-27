@@ -1,7 +1,7 @@
 #include "Font.h"
 #include "Debug.h"
 #include "Globals.h"
-#include "Defines.h"
+#include "HelperFunctions.h"
 #include <fstream>
 
 CFont::CFont()
@@ -29,9 +29,9 @@ bool CFont::Initialize(ID3D11Device * pDevice, ID3D11DeviceContext * pDeviceCont
 
 void CFont::Shutdown()
 {
-	SHUTDOWN_DELETE(m_pTexture);
+	SafeShutdounAndDelete(m_pTexture);
 
-	DELETE_ARR(m_pFont);
+	SafeDeleteArray(m_pFont);
 }
 
 ID3D11ShaderResourceView * CFont::GetTexture()

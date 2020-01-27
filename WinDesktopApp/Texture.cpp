@@ -1,7 +1,7 @@
 #include "Texture.h"
 #include <string>
 #include "Debug.h"
-#include "Defines.h"
+#include "HelperFunctions.h"
 
 CTexture::CTexture() {}
 
@@ -71,9 +71,9 @@ bool CTexture::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceCon
 
 void CTexture::Shutdown()
 {
-	RELEASE_AND_NULL(m_pTextureView);
-	RELEASE_AND_NULL(m_pTexture);
-	DELETE_ARR(m_pRawData);
+	SafeReleaseAndNull(m_pTextureView);
+	SafeReleaseAndNull(m_pTexture);
+	SafeDeleteArray(m_pRawData);
 }
 
 CTexture::TextureType CTexture::DetermineTextureType(const char * szFileName)

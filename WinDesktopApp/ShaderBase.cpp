@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ShaderBase.h"
 #include "Globals.h"
-#include "Defines.h"
+#include "HelperFunctions.h"
 
 ShaderBase::ShaderBase()
 {
@@ -73,10 +73,10 @@ void ShaderBase::OutputShaderErrMsg(ID3D10Blob* pErrorMessage, HWND hwnd, const 
 
 void ShaderBase::ShutdownShader()
 {
-	RELEASE_AND_NULL(m_pMatrixBuffer);
-	RELEASE_AND_NULL(m_pInputLayout);
-	RELEASE_AND_NULL(m_pPixelShader);
-	RELEASE_AND_NULL(m_pVertexShader);
+	SafeReleaseAndNull(m_pMatrixBuffer);
+	SafeReleaseAndNull(m_pInputLayout);
+	SafeReleaseAndNull(m_pPixelShader);
+	SafeReleaseAndNull(m_pVertexShader);
 }
 
 bool ShaderBase::SetMatrixBuffer(ID3D11DeviceContext* pDeviceContext, XMMATRIX matrWorld

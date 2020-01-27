@@ -1,6 +1,6 @@
 #include "Zone.h"
 #include "Debug.h"
-#include "Defines.h"
+#include "HelperFunctions.h"
 #include "Globals.h"
 
 const CPosition CAMERA_START_POSITION(XMFLOAT3(128.f, 5.f, -10.f), XMFLOAT3(0.f, 0.f, 0.f));
@@ -56,16 +56,16 @@ bool CZone::Initialize(D3D* pDirect3D, HWND hWnd, int nScreenWidht, int nScreenH
 
 void CZone::Shutdown()
 {
-	SHUTDOWN_DELETE(m_pTerrain);
-	DELETE(m_pPosition);
-	DELETE(m_pCamera);
-	DELETE(m_pLightSource);
-	SHUTDOWN_DELETE(m_pUserInterface);
+	SafeShutdounAndDelete(m_pTerrain);
+	SafeDelete(m_pPosition);
+	SafeDelete(m_pCamera);
+	SafeDelete(m_pLightSource);
+	SafeShutdounAndDelete(m_pUserInterface);
 
 	for(auto& pair : m_mapModels)
 	{
 		for(auto& model : pair.second)
-			SHUTDOWN_DELETE(model.m_pModel);
+			SafeShutdounAndDelete(model.m_pModel);
 	}
 	m_mapModels.clear();
 }

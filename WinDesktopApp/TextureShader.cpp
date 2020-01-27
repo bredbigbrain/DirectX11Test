@@ -1,7 +1,7 @@
 #include "TextureShader.h"
 #include "Globals.h"
 #include "Debug.h"
-#include "Defines.h"
+#include "HelperFunctions.h"
 
 CTextureShader::CTextureShader() {}
 
@@ -66,7 +66,7 @@ bool CTextureShader::InitializeShader(ID3D11Device* pDevice, HWND hwnd, const WC
 
 void CTextureShader::ShutdownShader() 
 {
-	RELEASE_AND_NULL(m_pSampleState);
+	SafeReleaseAndNull(m_pSampleState);
 
 	ShaderBase::ShutdownShader();
 }

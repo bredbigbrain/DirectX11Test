@@ -8,7 +8,7 @@
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow)
 {
-	System* pSystem = new System();
+	auto pSystem = std::make_unique<System>();
 
 	if (!pSystem->Initialize())
 		return -2;
@@ -16,7 +16,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 	pSystem->Run();
 
 	pSystem->Shutdown();
-	delete pSystem;
 
 	return 0;
 }

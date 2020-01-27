@@ -1,6 +1,6 @@
 #include "FontShader.h"
 #include "Debug.h"
-#include "Defines.h"
+#include "HelperFunctions.h"
 
 
 bool CFontShader::Initialize(ID3D11Device * pDevice, HWND hwnd)
@@ -65,7 +65,7 @@ void CFontShader::RenderShader(ID3D11DeviceContext* pDeviceContext, size_t nInde
 
 void CFontShader::ShutdownShader()
 {
-	RELEASE_AND_NULL(m_pPixelBuffer);
+	SafeReleaseAndNull(m_pPixelBuffer);
 
 	CTextureShader::ShutdownShader();
 }

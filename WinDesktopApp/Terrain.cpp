@@ -1,6 +1,6 @@
 #include "Terrain.h"
 #include "Debug.h"
-#include "Defines.h"
+#include "HelperFunctions.h"
 #include <fstream>
 #include <algorithm>
 
@@ -23,25 +23,25 @@ bool CTerrain::Initialize(ID3D11Device* pDevice, const char* lpszSetupFilePath)
 	if(!BuildTerrainModel())
 		RETURN_AND_LOG(false);
 
-	DELETE_ARR(m_arrHeightMap);
+	SafeDeleteArray(m_arrHeightMap);
 
 	CalculateTerrainVectors();
 
 	if(!InitializeBuffers(pDevice))
 		RETURN_AND_LOG(false);
 
-	DELETE_ARR(m_arrTerrainModel);
+	SafeDeleteArray(m_arrTerrainModel);
 	return true;
 }
 
 void CTerrain::Shutdown()
 {
-	RELEASE_AND_NULL(m_pVertexBuffer);
-	RELEASE_AND_NULL(m_pIndexBuffer);
-	DELETE_ARR(m_arrTerrainModel);
-	DELETE_ARR(m_arrHeightMap);
-	DELETE_ARR(m_lpszTerrainFileName);
-	DELETE_ARR(m_lpszColorMapFileName);
+	SafeReleaseAndNull(m_pVertexBuffer);
+	SafeReleaseAndNull(m_pIndexBuffer);
+	SafeDeleteArray(m_arrTerrainModel);
+	SafeDeleteArray(m_arrHeightMap);
+	SafeDeleteArray(m_lpszTerrainFileName);
+	SafeDeleteArray(m_lpszColorMapFileName);
 }
 
 bool CTerrain::Render(ID3D11DeviceContext* pDeviceContext)

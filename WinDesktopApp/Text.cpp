@@ -1,7 +1,7 @@
 #include "Text.h"
 #include "Debug.h"
 #include "Globals.h"
-#include "Defines.h"
+#include "HelperFunctions.h"
 
 CText::CText()
 {
@@ -28,10 +28,10 @@ bool CText::Initialize(ID3D11Device* pDvice, ID3D11DeviceContext* pDeviceContext
 
 void CText::Shutdown()
 {
-	RELEASE_AND_NULL(m_pVertexBuffer);
-	RELEASE_AND_NULL(m_pIndexBuffer);
-	RELEASE_AND_NULL(m_pVertexBuffer2);
-	RELEASE_AND_NULL(m_pIndexBuffer2);
+	SafeReleaseAndNull(m_pVertexBuffer);
+	SafeReleaseAndNull(m_pIndexBuffer);
+	SafeReleaseAndNull(m_pVertexBuffer2);
+	SafeReleaseAndNull(m_pIndexBuffer2);
 }
 
 void CText::Render(ID3D11DeviceContext * pDeviceContext, CShaderManager * pShManager, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrOrtho, ID3D11ShaderResourceView * pFontTexture)

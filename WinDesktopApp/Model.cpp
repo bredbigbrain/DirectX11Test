@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Model.h"
-#include "Defines.h"
+#include "HelperFunctions.h"
 #include "Globals.h"
 #include "Terrain.h"
 
@@ -45,7 +45,7 @@ void Model::Render(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
 {
 	if(m_bTransformed)
 	{
-		RELEASE_AND_NULL(m_pVertexBuffer);
+		SafeReleaseAndNull(m_pVertexBuffer);
 		InitializeVertexBuffer(pDevice);
 	}
 
@@ -55,10 +55,10 @@ void Model::Render(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext)
 void Model::Shutdown()
 {
 	if(m_bHandleTexture)
-		SHUTDOWN_DELETE(m_pTexture);
+		SafeShutdounAndDelete(m_pTexture);
 
-	RELEASE_AND_NULL(m_pVertexBuffer);
-	RELEASE_AND_NULL(m_pIndexBuffer);
+	SafeReleaseAndNull(m_pVertexBuffer);
+	SafeReleaseAndNull(m_pIndexBuffer);
 }
 
 int Model::GetIndexCount() const

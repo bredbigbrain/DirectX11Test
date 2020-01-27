@@ -2,7 +2,7 @@
 #include "System.h"
 #include "Globals.h"
 #include "Debug.h"
-#include "Defines.h"
+#include "HelperFunctions.h"
 
 
 bool System::Initialize()
@@ -54,11 +54,11 @@ bool System::Initialize()
 
 void System::Shutdown()
 {
-	SHUTDOWN_DELETE(m_pZone);
-	SHUTDOWN_DELETE(m_pShManager);
-	SHUTDOWN_DELETE(m_pTexManager);
-	SHUTDOWN_DELETE(m_pDirect3D);
-	DELETE(m_pInput);
+	SafeShutdounAndDelete(m_pZone);
+	SafeShutdounAndDelete(m_pShManager);
+	SafeShutdounAndDelete(m_pTexManager);
+	SafeShutdounAndDelete(m_pDirect3D);
+	SafeDelete(m_pInput);
 
 	ShutdownWindows();	
 	settings.Shutdown();

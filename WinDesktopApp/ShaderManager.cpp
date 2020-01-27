@@ -1,6 +1,6 @@
 #include "ShaderManager.h"
 #include "Debug.h"
-#include "Defines.h"
+#include "HelperFunctions.h"
 
 bool CShaderManager::Initialize(ID3D11Device * pDevice, HWND hwnd)
 {
@@ -29,11 +29,11 @@ bool CShaderManager::Initialize(ID3D11Device * pDevice, HWND hwnd)
 
 void CShaderManager::Shutdown()
 {
-	SHUTDOWN_DELETE(m_pColorShader);
-	SHUTDOWN_DELETE(m_pFontShader);
-	SHUTDOWN_DELETE(m_pTextureShader);
-	SHUTDOWN_DELETE(m_pLightShader);
-	SHUTDOWN_DELETE(m_pTerrainShader);
+	SafeShutdounAndDelete(m_pColorShader);
+	SafeShutdounAndDelete(m_pFontShader);
+	SafeShutdounAndDelete(m_pTextureShader);
+	SafeShutdounAndDelete(m_pLightShader);
+	SafeShutdounAndDelete(m_pTerrainShader);
 }
 
 bool CShaderManager::RenderColorShader(ID3D11DeviceContext * pDeviceContext, size_t nIndexCount, XMMATRIX matrWorld, XMMATRIX matrView, XMMATRIX matrProjection)
